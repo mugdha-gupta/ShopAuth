@@ -1,10 +1,15 @@
 # Getting API Running
+## Steps
+ 1. [Install Mysql](#installation)
+ 2. [Start server](#start-stop-mysql-server)
+ 3. [Load SQL file](#load-sql-file-to-server)
+ 4. [Synchronize pom.xml](#synchronize-pom)
 
 ## Installation
 
 Install [Mysql](https://dev.mysql.com/downloads/mysql/) server.
 
-## Start/Stop Mysql server
+## Start Stop Mysql Server
 * ### Windows
   * Start
     ```bash
@@ -33,6 +38,15 @@ Install [Mysql](https://dev.mysql.com/downloads/mysql/) server.
     /etc/init.d/mysqld stop
     ```
 ## Load SQL File to Server
+  ```bash
+  mysql -u root -p authdb < ./api/src/main/resources/authdb.schema.sql
+  ```
+
+## Synchronize pom
+  * ### From within intellij
+     Right click on pom.xml file
+     Click on "Synchronize pom.xml"
+  * ### From command line
   ```bash
   mysql -u root -p authdb < ./api/src/main/resources/authdb.schema.sql
   ```
