@@ -1,9 +1,13 @@
 # Getting API Running
 ## Steps
- 1. [Install Mysql](#installation)
+ 1. [Install Mysql](#installation)<sup>[1](#myfootnote1)</sup>
  2. [Start server](#start-stop-mysql-server)
- 3. [Load SQL file](#load-sql-file-to-server)
- 4. [Synchronize pom.xml](#synchronize-pom)
+ 3. [Load SQL file](#load-sql-file-to-server)<sup>[1](#myfootnote1)</sup>
+ 4. [Open API Project](#open-api-project)<sup>[1](#myfootnote1)</sup>
+ 5. [Synchronize pom.xml](#synchronize-pom)<sup>[1](#myfootnote1)</sup>
+ 6. Run MainApplicationClass file
+ 7. Finsihed
+<br /><a name="myfootnote1"><sup>1<sup/></a> Only needed first time starting server on machine
 
 ## Installation
 
@@ -41,12 +45,10 @@ Install [Mysql](https://dev.mysql.com/downloads/mysql/) server.
   ```bash
   mysql -u root -p authdb < ./api/src/main/resources/authdb.schema.sql
   ```
+## Open API Project
+ From intellij open new project by choosing the pom.xml file
 
 ## Synchronize pom
-  * ### From within intellij
-     Right click on pom.xml file
-     Click on "Synchronize pom.xml"
-  * ### From command line
-  ```bash
-  mysql -u root -p authdb < ./api/src/main/resources/authdb.schema.sql
-  ```
+ Have project open in intellij<br />
+ Right click on pom.xml file<br />
+ Click on "Synchronize pom.xml"
