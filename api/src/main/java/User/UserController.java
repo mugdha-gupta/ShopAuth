@@ -1,6 +1,5 @@
 package User;
 
-import User.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,17 +13,17 @@ public class UserController {
     private boolean adminPresent = false;
 
     @Autowired
-    private UserRespository userRespository;
+    private UserRepository userRepository;
 
     @GetMapping("/user")
     public List<User> index(){
-        return userRespository.findAll();
+        return userRepository.findAll();
     }
 
     @GetMapping("/user/{id}")
     public User show(@PathVariable String id){
         int userId = Integer.parseInt(id);
-        Optional<User> user = this.userRespository.findById(userId);
+        Optional<User> user = this.userRepository.findById(userId);
         if (user.isPresent()) {
             return user.get();
         } else {
@@ -35,7 +34,7 @@ public class UserController {
     @PostMapping("/user/search")
     public List<User> search(@RequestBody Map<String, String> body){
         String searchTerm = body.get("email");
-        return userRespository.findByEmailContaining(searchTerm);
+        return userRepository.findByEmailContaining(searchTerm);
     }
 
     @PostMapping("/user/admin")
@@ -54,7 +53,7 @@ public class UserController {
         String email = body.get("email");
         String scan_string = body.get("scan_string");
         String name = body.get("name");
-        return userRespository.save(new User(scan_string, name, email));
+        return userRepository.save(new User(scan_string, name, email));
     }
 
     @PutMapping("/user/{id}")
@@ -62,21 +61,21 @@ public class UserController {
         int userId = Integer.parseInt(id);
         // getting user
         User user;
-        Optional<User> userRet = this.userRespository.findById(userId);
+        Optional<User> userRet = this.userRepository.findById(userId);
         if (!userRet.isPresent()) {
             return null;
         }
         user = userRet.get();
-        user.setScan_string(body.get("scan_string"));
+        user.setScanString(body.get("scan_string"));
         user.setEmail(body.get("email"));
         user.setName(body.get("name"));
-        return userRespository.save(user);
+        return userRepository.save(user);
     }
 
     @DeleteMapping("user/{id}")
     public boolean delete(@PathVariable String id){
         int userId = Integer.parseInt(id);
-        userRespository.deleteById(userId);
+        userRepository.deleteById(userId);
         return true;
     }
 

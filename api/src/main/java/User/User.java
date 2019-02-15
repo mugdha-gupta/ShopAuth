@@ -1,9 +1,6 @@
 package User;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class User {
@@ -11,23 +8,42 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    private String scan_string;
+    @Column(name = "scanString", unique=true)
+    private String scanString;
     private String name;
     private String email;
+    private int admin_level;
 
     public User() {  }
 
-    public User(String scan_string, String name, String email) {
-        this.setScan_string(scan_string);
+    public User(String scanString, String name, String email) {
+        this.setScanString(scanString);
         this.setEmail(email);
         this.setName(name);
+        this.setAdmin_level(0);
     }
 
-    public User(int id, String scan_string, String name, String email) {
+    public User(int id, String scanString, String name, String email) {
         this.setId(id);
-        this.setScan_string(scan_string);
+        this.setScanString(scanString);
         this.setEmail(email);
         this.setName(name);
+        this.setAdmin_level(0);
+    }
+
+    public User(String scanString, String name, String email, int admin_level) {
+        this.setScanString(scanString);
+        this.setEmail(email);
+        this.setName(name);
+        this.setAdmin_level(admin_level);
+    }
+
+    public User(int id, String scanString, String name, String email, int admin_level) {
+        this.setId(id);
+        this.setScanString(scanString);
+        this.setEmail(email);
+        this.setName(name);
+        this.setAdmin_level(admin_level);
     }
 
     public int getId() {
@@ -38,12 +54,12 @@ public class User {
         this.id = id;
     }
 
-    public String getScan_string() {
-        return scan_string;
+    public String getScanString() {
+        return scanString;
     }
 
-    public void setScan_string(String scan_string) {
-        this.scan_string = scan_string;
+    public void setScanString(String scanString) {
+        this.scanString = scanString;
     }
 
     public String getEmail() {
@@ -62,13 +78,36 @@ public class User {
         this.name = name;
     }
 
+    public int getAdmin_level() {
+        return admin_level;
+    }
+
+    public void setAdmin_level(int admin_level) {
+        this.admin_level = admin_level;
+    }
+
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", scan_string='" + scan_string + '\'' +
+                ", scanString='" + scanString + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", admin_level='" + admin_level + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (!(obj instanceof User))
+            return false;
+        return this.getId() == ((Machine) obj).getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 }
