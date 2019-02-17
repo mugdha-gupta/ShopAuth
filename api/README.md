@@ -6,7 +6,7 @@
  4. [Open API Project](#open-api-project)<sup>[1](#myfootnote1)</sup>
  5. [Synchronize pom.xml](#synchronize-pom)<sup>[1](#myfootnote1)</sup>
  6. Run MainApplicationClass file
- 7. Finsihed
+ 7. View swagger documentation at [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 <br /><a email="myfootnote1"><sup>1<sup/></a> Only needed first time starting server on machine
 
 ## Installation
