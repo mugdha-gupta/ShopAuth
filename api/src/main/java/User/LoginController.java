@@ -3,24 +3,24 @@ package User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 public class LoginController {
 
     private boolean adminPresent = false;
-    private HashMap<Machine, User> status = new HashMap<Machine, User>();
+    private ConcurrentHashMap<Machine, User> status = new ConcurrentHashMap<Machine, User>();
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private MachineRepository machineRepository;
 
     @GetMapping("/login")
-    public HashMap<Machine, User> showall(){
+    public ConcurrentHashMap<Machine, User> showall(){
         return status;
     }
 

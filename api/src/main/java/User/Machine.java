@@ -20,11 +20,21 @@ public class Machine {
         this.setType(type);
     }
 
+    public Machine(String displayname) {
+        this.setDisplayname(displayname);
+    }
+
     public Machine(int id, String displayname, Machine_type type) {
         this.setId(id);
         this.setDisplayname(displayname);
         this.setType(type);
     }
+
+    public Machine(int id, String displayname) {
+        this.setId(id);
+        this.setDisplayname(displayname);
+    }
+
 
     public int getId() {
         return id;
@@ -52,6 +62,13 @@ public class Machine {
 
     @Override
     public String toString() {
+        if(type == null){
+            return "Machine{" +
+                    "id=" + id +
+                    ", displayname='" + displayname + '\'' +
+                    ", type='null\'" +
+                    '}';
+        }
         return "Machine{" +
                 "id=" + id +
                 ", displayname='" + displayname + '\'' +

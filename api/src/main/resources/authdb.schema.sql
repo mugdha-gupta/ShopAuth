@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS authdb.machine_type (
 CREATE TABLE IF NOT EXISTS authdb.machine (
   id BIGINT NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (id),
-  type BIGINT NOT NULL,
+  type BIGINT,
   FOREIGN KEY (type) REFERENCES authdb.machine_type (id) ON DELETE RESTRICT,
   displayname VARCHAR(255) NOT NULL
 );

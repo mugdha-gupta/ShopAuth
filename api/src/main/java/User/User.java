@@ -1,6 +1,9 @@
 package User;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class User {
@@ -8,10 +11,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column(name = "scanString", unique=true)
+    @NotNull
+    @Column(name = "scan_string", unique=true)
     private String scanString;
+    @NotNull
     private String name;
+    @NotNull
     private String email;
+    @Value("0")
     private int admin_level;
 
     public User() {  }
