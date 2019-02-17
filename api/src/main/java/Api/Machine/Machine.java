@@ -1,4 +1,8 @@
-package User;
+package Api.Machine;
+
+import Api.MachineType.MachineType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 
@@ -6,16 +10,20 @@ import javax.persistence.*;
 public class Machine {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @ApiModelProperty(notes = "The auto generated id of the machine")
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name="type", nullable=false)
-    private Machine_type type;
+    @ApiModelProperty(notes = "The id of the type of the machine")
+    private MachineType type;
+
+    @ApiModelProperty(notes = "The name displayed to users for identification")
     private String displayname;
 
     public Machine() {  }
 
-    public Machine(String displayname, Machine_type type) {
+    public Machine(String displayname, MachineType type) {
         this.setDisplayname(displayname);
         this.setType(type);
     }
@@ -24,23 +32,23 @@ public class Machine {
         this.setDisplayname(displayname);
     }
 
-    public Machine(int id, String displayname, Machine_type type) {
+    public Machine(Long id, String displayname, MachineType type) {
         this.setId(id);
         this.setDisplayname(displayname);
         this.setType(type);
     }
 
-    public Machine(int id, String displayname) {
+    public Machine(Long id, String displayname) {
         this.setId(id);
         this.setDisplayname(displayname);
     }
 
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -52,11 +60,11 @@ public class Machine {
         this.displayname = displayname;
     }
 
-    public Machine_type getType() {
+    public MachineType getType() {
         return type;
     }
 
-    public void setType(Machine_type type) {
+    public void setType(MachineType type) {
         this.type = type;
     }
 
@@ -86,7 +94,7 @@ public class Machine {
 
     @Override
     public int hashCode() {
-        return id;
+        return id.intValue();
     }
 
 }

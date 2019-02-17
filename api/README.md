@@ -7,7 +7,7 @@
  5. [Synchronize pom.xml](#synchronize-pom)<sup>[1](#myfootnote1)</sup>
  6. Run MainApplicationClass file
  7. Finsihed
-<br /><a name="myfootnote1"><sup>1<sup/></a> Only needed first time starting server on machine
+<br /><a email="myfootnote1"><sup>1<sup/></a> Only needed first time starting server on machine
 
 ## Installation
 

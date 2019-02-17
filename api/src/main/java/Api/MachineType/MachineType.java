@@ -1,39 +1,41 @@
-package User;
+package Api.MachineType;
+
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import java.sql.Time;
-import java.util.Set;
 
 @Entity
-public class Machine_type {
+public class MachineType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @ApiModelProperty(notes = "The auto generated id of the machine type")
+    private Long id;
 
+    @ApiModelProperty(notes = "The name displayed to users for identification")
     private String displayname;
+
+    @ApiModelProperty(notes = "The default time a user is given for these type of machines")
     private Time time1;
 
-    @OneToMany(mappedBy = "type")
-    private Set<Machine> machineSet;
+    public MachineType(){};
 
-    public Machine_type(){};
-
-    public Machine_type(String displayname, Time time1) {
+    public MachineType(String displayname, Time time1) {
         this.setDisplayname(displayname);
         this.setTime1(time1);
     }
 
-    public Machine_type(int id, String displayname, Time time1) {
+    public MachineType(Long id, String displayname, Time time1) {
         this.setId(id);
         this.setDisplayname(displayname);
         this.setTime1(time1);
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
