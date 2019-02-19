@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS authdb.auth (
   user_id BIGINT NOT NULL,
   FOREIGN KEY (user_id) REFERENCES authdb.user (id) ON DELETE RESTRICT,
   type BIGINT NOT NULL,
-  FOREIGN KEY (machine_type_id) REFERENCES authdb.machine_type (id) ON DELETE RESTRICT
+  FOREIGN KEY (type) REFERENCES authdb.machine_type (id) ON DELETE RESTRICT
 );
 
 
