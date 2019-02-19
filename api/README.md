@@ -55,7 +55,10 @@ Install [Mysql](https://dev.mysql.com/downloads/mysql/) server.
 
 ## Load SQL File to Server
   ```bash
-  mysql -u root -p authdb < ./api/src/main/resources/authdb.schema.sql
+  C:> mysql -u root -p
+  mysql> CREATE DATABASE authdb;
+  mysql> exit
+  C:> mysql -u root -p authdb < ./api/src/main/resources/authdb.schema.sql
   ```
 ## Open API Project
  From intellij open new project by choosing the pom.xml file
