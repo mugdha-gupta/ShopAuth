@@ -4,15 +4,15 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
 
-public class SearchBody {
+public class SearchUserBody {
     @NotNull
     @ApiModelProperty(notes = "The email of the desired user")
     private String email;
 
-    public SearchBody(){
+    public SearchUserBody(){
     }
 
-    public SearchBody(String email) {
+    public SearchUserBody(String email) {
         this.email = email;
     }
 

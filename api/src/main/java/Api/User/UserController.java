@@ -27,24 +27,24 @@ public class UserController {
     @ApiOperation(value = "Get a certain user by ID")
     @GetMapping("/{id}")
     public User show(@PathVariable Long id){
-        return userRepository.findById(id).map(user -> user).orElseThrow(() -> new ResourceNotFoundException("userId " + id + "not found"));
+        return userRepository.findById(id).map(user -> user).orElseThrow(() -> new ResourceNotFoundException("userId " + id + " not found"));
     }
 
     @ApiOperation(value = "Get a certain user by email")
     @PostMapping("/search")
-    public List<User> search(@RequestBody SearchBody body){
+    public List<User> search(@RequestBody SearchUserBody body){
         return userRepository.findByEmailContaining(body.getEmail());
     }
 
     @ApiOperation(value = "Create a new user")
     @PostMapping("")
-    public User create(@Valid @RequestBody User body){
-        return userRepository.save(body);
+    public User create(@Valid @RequestBody UserCreator body){
+        return userRepository.save(body.toUser());
     }
 
     @ApiOperation(value = "Update an existing user")
     @PutMapping("/{id}")
-    public User update(@PathVariable Long id, @Valid @RequestBody User postRequest){
+    public User update(@PathVariable Long id, @Valid @RequestBody UserCreator postRequest){
         return userRepository.findById(id).map(user -> {
             user.setName(postRequest.getName());
             user.setEmail(postRequest.getEmail());

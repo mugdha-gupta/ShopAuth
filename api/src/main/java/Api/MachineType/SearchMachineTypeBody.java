@@ -1,18 +1,18 @@
-package Api.Machine;
+package Api.MachineType;
 
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
 
-public class SearchBody {
+public class SearchMachineTypeBody {
     @NotNull
-    @ApiModelProperty(notes = "The name of a machine")
+    @ApiModelProperty(notes = "The name of a machine type")
     private String name;
 
-    public SearchBody(){
+    public SearchMachineTypeBody(){
     }
 
-    public SearchBody(String name) {
+    public SearchMachineTypeBody(String name) {
         this.name = name;
     }
 

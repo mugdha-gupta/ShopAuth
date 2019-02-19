@@ -3,16 +3,9 @@ package Api.MachineType;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.lang.NonNull;
 
-import javax.persistence.*;
 import java.sql.Time;
 
-@Entity
-public class MachineType {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @ApiModelProperty(notes = "The auto generated id of the machine type")
-    private Long id;
-
+public class MachineTypeCreator {
     @NonNull
     @ApiModelProperty(notes = "The name displayed to users for identification")
     private String displayname;
@@ -20,25 +13,11 @@ public class MachineType {
     @ApiModelProperty(notes = "The default time a user is given for these type of machines", dataType = "java.lang.String", example = "HH:MM:SS")
     private Time time1;
 
-    public MachineType(){};
+    public MachineTypeCreator(){};
 
-    public MachineType(String displayname, Time time1) {
+    public MachineTypeCreator(String displayname, Time time1) {
         this.setDisplayname(displayname);
         this.setTime1(time1);
-    }
-
-    public MachineType(Long id, String displayname, Time time1) {
-        this.setId(id);
-        this.setDisplayname(displayname);
-        this.setTime1(time1);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getDisplayname() {
@@ -57,12 +36,8 @@ public class MachineType {
         this.time1 = time1;
     }
 
-    @Override
-    public String toString() {
-        return "Type{" +
-                "id=" + id +
-                ", displayname='" + displayname + '\'' +
-                ", time1='" + time1.toString() + '\'' +
-                '}';
+    public MachineType toMachineType(){
+        return new MachineType(displayname, time1);
     }
+
 }

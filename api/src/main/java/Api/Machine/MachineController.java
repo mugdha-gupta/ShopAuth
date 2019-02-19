@@ -31,12 +31,13 @@ public class MachineController {
     @ApiOperation(value = "Get a certain machine by ID")
     @GetMapping("/{id}")
     public Machine show(@PathVariable Long id){
-        return machineRepository.findById(id).map(machine -> machine).orElseThrow(() -> new ResourceNotFoundException("machineId " + id + "not found"));
+        System.out.println(id);
+        return machineRepository.findById(id).map(machine -> machine).orElseThrow(() -> new ResourceNotFoundException("machineId " + id + " not found"));
     }
 
     @ApiOperation(value = "Get a certain machine by name")
     @PostMapping("/search")
-    public List<Machine> search(@RequestBody SearchBody body){
+    public List<Machine> search(@Valid @RequestBody SearchMachineBody body){
         return machineRepository.findByDisplaynameContaining(body.getName());
     }
 
@@ -48,18 +49,32 @@ public class MachineController {
 
     @ApiOperation(value = "Create a new machine")
     @PostMapping("")
-    public Machine create(@Valid @RequestBody Machine body){
-        return machineRepository.save(body);
+    public Machine create(@Valid @RequestBody MachineCreator body){
+        //Check if type was given
+        if(body.getType()==null){
+            Machine newMachine = new Machine(body.getDisplayname());
+            return machineRepository.save(newMachine);
+        }
+        return machineTypeRepository.findById(body.getType()).map(machineType -> {
+            Machine newMachine = new Machine(body.getDisplayname(), machineType);
+            return machineRepository.save(newMachine);
+        }).orElseThrow(() -> new ResourceNotFoundException("machineTypeId " + body.getType() + " not found"));
     }
 
     @ApiOperation(value = "Update an existing machine")
     @PutMapping("/{id}")
-    public Machine update(@PathVariable Long id, @Valid @RequestBody Machine body){
+    public Machine update(@PathVariable Long id, @Valid @RequestBody MachineCreator body){
         return machineRepository.findById(id).map(machine -> {
             machine.setDisplayname(body.getDisplayname());
-            machine.setType(body.getType());
-            return machineRepository.save(machine);
-        }).orElseThrow(() -> new ResourceNotFoundException("machineId " + id + "not found"));
+            if(body.getType()==null) {
+                machine.setType(null);
+                return machineRepository.save(machine);
+            }
+            return machineTypeRepository.findById(body.getType()).map(machineType -> {
+                machine.setType(machineType);
+                return machineRepository.save(machine);
+            }).orElseThrow(() -> new ResourceNotFoundException("machineTypeId " + body.getType() + " not found"));
+        }).orElseThrow(() -> new ResourceNotFoundException("machineId " + id + " not found"));
     }
 
     @ApiOperation(value = "Delete a certain machine by id")
