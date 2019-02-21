@@ -128,3 +128,8 @@ You can test the API by connecting to the swagger.io page hosted on the server, 
 
 Otherwise, one can use `curl` or `wget` or other HTTP request-making programs to test the endpoints at `http://localhost:8080/`.
 
+Unit tests can be run from Maven with
+```bash
+mvn test
+```
+
