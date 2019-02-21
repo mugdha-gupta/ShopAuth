@@ -121,10 +121,7 @@ public class User {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (!(obj instanceof User))
-            return false;
-        return this.getId() == ((Machine) obj).getId();
+        return obj != null && obj instanceof User && this.getId().equals(((User) obj).getId());
     }
 
     @Override
