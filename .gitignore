@@ -3,3 +3,4 @@ ShopAuth.iml
 target/
 SpringRest.iml
 application.properties
+./api/src/main/resources/application.properties
