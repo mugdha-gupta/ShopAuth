@@ -4,7 +4,7 @@
  3. [Initialize Project](#initialize_project)
  4. [Run the project](#run-the-application)
  5. [Run requests](#run-requests)
- 6. [Test the endpoints](#test-the-endpoints
+ 6. [Test the endpoints](#test-the-endpoints)
 
 ## Dependency Installation
 
