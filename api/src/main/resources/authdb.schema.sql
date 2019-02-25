@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS authdb.auth (
 
 
 CREATE TABLE IF NOT EXISTS authdb.log (
-  start_time TIMESTAMP NOT NULL,
-  end_time TIMESTAMP NULL,
+  starttime TIMESTAMP NOT NULL,
+  endtime TIMESTAMP NULL,
   machine BIGINT NOT NULL,
   FOREIGN KEY (machine) REFERENCES authdb.machine (id) ON DELETE RESTRICT,
   user BIGINT NOT NULL,

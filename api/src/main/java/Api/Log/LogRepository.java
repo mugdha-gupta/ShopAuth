@@ -10,4 +10,5 @@ public interface LogRepository extends JpaRepository<Log, LogPrimaryKey> {
 
     List<Log> findByMachineId(Long machineId);
     List<Log> findByUserId(Long userId);
+    List<Log> findTop1ByUserIdOrderByStarttimeDesc(Long userId);
 }

@@ -5,15 +5,15 @@ import java.sql.Timestamp;
 
 public class LogPrimaryKey implements Serializable {
     protected String witness;
-    protected Timestamp start_time;
+    protected Timestamp starttime;
 
     public LogPrimaryKey() {
     }
 
-    public LogPrimaryKey(String witness, Timestamp end_time) {
+    public LogPrimaryKey(String witness, Timestamp starttime) {
 
         this.witness = witness;
-        this.start_time = end_time;
+        this.starttime = starttime;
     }
 
     public String getWitness() {
@@ -24,12 +24,12 @@ public class LogPrimaryKey implements Serializable {
         this.witness = witness;
     }
 
-    public Timestamp getEnd_time() {
-        return start_time;
+    public Timestamp getStarttime() {
+        return starttime;
     }
 
-    public void setEnd_time(Timestamp end_time) {
-        this.start_time = end_time;
+    public void setStarttime(Timestamp starttime) {
+        this.starttime = starttime;
     }
 
     @Override
@@ -40,13 +40,13 @@ public class LogPrimaryKey implements Serializable {
         LogPrimaryKey that = (LogPrimaryKey) o;
 
         if (!getWitness().equals(that.getWitness())) return false;
-        return getEnd_time().equals(that.getEnd_time());
+        return getStarttime().equals(that.getStarttime());
     }
 
     @Override
     public int hashCode() {
         int result = getWitness().hashCode();
-        result = 31 * result + getEnd_time().hashCode();
+        result = 31 * result + getStarttime().hashCode();
         return result;
     }
 }

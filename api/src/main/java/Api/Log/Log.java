@@ -14,10 +14,10 @@ import java.sql.Timestamp;
 public class Log {
     @Id
     @ApiModelProperty(notes = "The time the user started using the machine", dataType = "java.lang.String", example = "YYYY-MM-DD HH:MI:SS")
-    private Timestamp start_time;
+    private Timestamp starttime;
 
     @ApiModelProperty(notes = "The time the user finished using the machine", dataType = "java.lang.String", example = "YYYY-MM-DD HH:MI:SS")
-    private Timestamp end_time;
+    private Timestamp endtime;
 
     @NotNull
     @ManyToOne
@@ -40,9 +40,9 @@ public class Log {
     public Log() {
     }
 
-    public Log(Timestamp start_time, Timestamp end_time, @NotNull User user, @NotNull Machine machine, String witness) {
-        this.start_time = start_time;
-        this.end_time = end_time;
+    public Log(Timestamp starttime, Timestamp endtime, @NotNull User user, @NotNull Machine machine, String witness) {
+        this.starttime = starttime;
+        this.endtime = endtime;
         this.user = user;
         this.machine = machine;
         this.witness = witness;
@@ -51,28 +51,28 @@ public class Log {
     @Override
     public String toString() {
         return "Log{" +
-                "start_time=" + start_time +
-                ", end_time=" + end_time +
+                "starttime=" + starttime +
+                ", endtime=" + endtime +
                 ", user=" + user +
                 ", machine=" + machine +
                 ", witness='" + witness + '\'' +
                 '}';
     }
 
-    public Timestamp getStart_time() {
-        return start_time;
+    public Timestamp getStarttime() {
+        return starttime;
     }
 
-    public void setStart_time(Timestamp start_time) {
-        this.start_time = start_time;
+    public void setStarttime(Timestamp starttime) {
+        this.starttime = starttime;
     }
 
-    public Timestamp getEnd_time() {
-        return end_time;
+    public Timestamp getEndtime() {
+        return endtime;
     }
 
-    public void setEnd_time(Timestamp end_time) {
-        this.end_time = end_time;
+    public void setEndtime(Timestamp endtime) {
+        this.endtime = endtime;
     }
 
     public User getUser() {

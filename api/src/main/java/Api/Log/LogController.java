@@ -28,14 +28,14 @@ public class LogController {
     @Autowired
     private UserRepository userRepository;
 
-    @ApiOperation(value = "Get a list of all authorizations")
+    @ApiOperation(value = "Get a list of all logs")
     @GetMapping("")
     public List<Log> index(){
         return logRepository.findAll();
     }
 
 
-    @ApiOperation(value = "Get a a list of auths for certain user")
+    @ApiOperation(value = "Get a a list of logs for certain user")
     @PostMapping("/findByUser")
     public List<Log> findByUser(@Valid @RequestBody Long userId){
         return logRepository.findByUserId(userId);
@@ -47,7 +47,7 @@ public class LogController {
         return logRepository.findByMachineId(machineId);
     }
 
-    @ApiOperation(value = "Create a new authorization")
+    @ApiOperation(value = "Create a new log")
     @PostMapping("")
     public Log create(@Valid @RequestBody LogCreator body){
         //Get machine
@@ -60,5 +60,11 @@ public class LogController {
             }).orElseThrow(() -> new ResourceNotFoundException("userId " + body.getUser() + " not found"));
             //If machine  not found throw error
         }).orElseThrow(() -> new ResourceNotFoundException("machineId " + body.getMachine() + " not found"));
+    }
+
+    @ApiOperation(value = "Get newest log of user")
+    @GetMapping("/{id}")
+    public List<Log> getNewest(@PathVariable Long id){
+        return logRepository.findTop1ByUserIdOrderByStarttimeDesc(id);
     }
 }
