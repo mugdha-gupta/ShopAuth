@@ -27,8 +27,10 @@ CREATE TABLE IF NOT EXISTS authdb.machine (
 );
 
 CREATE TABLE IF NOT EXISTS authdb.auth (
-  user_id BIGINT NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES authdb.user (id) ON DELETE RESTRICT,
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (id),
+  user BIGINT NOT NULL,
+  FOREIGN KEY (user) REFERENCES authdb.user (id) ON DELETE RESTRICT,
   type BIGINT NOT NULL,
   FOREIGN KEY (type) REFERENCES authdb.machine_type (id) ON DELETE RESTRICT
 );
@@ -38,9 +40,9 @@ CREATE TABLE IF NOT EXISTS authdb.log (
   start_time TIMESTAMP NOT NULL,
   end_time TIMESTAMP NULL,
   machine_id BIGINT NOT NULL,
-  FOREIGN KEY (machine_id) REFERENCES authdb.machine (id) ON DELETE RESTRICT,
-  user_id BIGINT NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES authdb.user (id) ON DELETE RESTRICT,
+  FOREIGN KEY (machine_id) REFERENCES authdb.auth (id) ON DELETE RESTRICT,
+  user BIGINT NOT NULL,
+  FOREIGN KEY (user) REFERENCES authdb.user (id) ON DELETE RESTRICT,
   witness_id VARCHAR(255) NOT NULL
 );
 

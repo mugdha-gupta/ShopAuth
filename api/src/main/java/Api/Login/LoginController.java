@@ -1,5 +1,6 @@
 package Api.Login;
 
+import Api.Auth.AuthRepository;
 import Api.Machine.Machine;
 import Api.Machine.MachineRepository;
 import Api.Exceptions.ResourceNotFoundException;
@@ -27,6 +28,9 @@ public class LoginController {
     @Autowired
     private MachineRepository machineRepository;
 
+    @Autowired
+    private AuthRepository authRepository;
+
     @ApiOperation(value = "View a status of who is using each machine")
     @GetMapping("")
     public ConcurrentHashMap<Machine, User> showall(){
@@ -46,11 +50,14 @@ public class LoginController {
         AuthReturn authReturn = new AuthReturn();
         return machineRepository.findById(body.getMachine_id()).map(machine ->
                 userRepository.findByScanString(body.getScan_string()).map(user -> {
-                status.put(machine, user);
-                authReturn.setAuthenticated(true);
-                authReturn.setNeedWitness(!adminPresent);
-                authReturn.setTime(machine.getType().getTime1());
-                return authReturn;
+                    boolean auth = authRepository.findByUserIdAndTypeId(user.getId(), machine.getId()).isPresent();
+                    if(auth) {
+                        status.put(machine, user);
+                    }
+                    authReturn.setAuthenticated(auth);
+                    authReturn.setNeedWitness(!adminPresent && user.getAdmin_level()!=2);
+                    authReturn.setTime(machine.getType().getTime1());
+                    return authReturn;
             }).orElseThrow(() -> new ResourceNotFoundException("No user found with scan string " + body.getScan_string()))
         ).orElseThrow(() -> new ResourceNotFoundException("MachineId " + body.getMachine_id() + " not found"));
     }

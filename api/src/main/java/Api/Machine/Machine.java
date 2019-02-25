@@ -4,6 +4,7 @@ import Api.MachineType.MachineType;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Machine {
@@ -12,11 +13,13 @@ public class Machine {
     @ApiModelProperty(notes = "The auto generated id of the machine")
     private Long id;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name="type", nullable=false)
+    @JoinColumn(name="type")
     @ApiModelProperty(notes = "The id of the type of the machine")
     private MachineType type;
 
+    @NotNull
     @ApiModelProperty(notes = "The name displayed to users for identification")
     private String displayname;
 
