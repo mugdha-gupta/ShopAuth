@@ -1,10 +1,6 @@
 package Api.Auth;
 
 import Api.Exceptions.ResourceNotFoundException;
-import Api.Machine.FilterBody;
-import Api.Machine.Machine;
-import Api.Machine.MachineCreator;
-import Api.Machine.SearchMachineBody;
 import Api.MachineType.MachineTypeRepository;
 import Api.User.UserRepository;
 import io.swagger.annotations.Api;

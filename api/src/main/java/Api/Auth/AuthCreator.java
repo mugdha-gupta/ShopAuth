@@ -1,8 +1,5 @@
 package Api.Auth;
 
-/**
- * Created by chrisjanusa on 2/24/19.
- */
 public class AuthCreator {
     private Long userId;
     private Long typeId;

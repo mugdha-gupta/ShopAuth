@@ -62,6 +62,15 @@ public class LoginController {
         ).orElseThrow(() -> new ResourceNotFoundException("MachineId " + body.getMachine_id() + " not found"));
     }
 
+    @ApiOperation(value = "Authenticate a user by scan string for a certain machine by ID")
+    @PostMapping("/logout")
+    public boolean logout(@Valid @RequestBody Long machineId){
+        return machineRepository.findById(machineId).map(machine -> {
+            status.remove(machine);
+            return true;
+        }).orElseThrow(() -> new ResourceNotFoundException("MachineId " + machineId + " not found"));
+    }
+
     @ApiOperation(value = "Set whether or not an admin is currently present")
     @PostMapping("/setadmin")
     public boolean setadmin(@RequestBody Boolean admin){
