@@ -1,6 +1,9 @@
 package Api.Login;
 
 import Api.Auth.AuthRepository;
+import Api.Log.Log;
+import Api.Log.LogCreator;
+import Api.Log.LogRepository;
 import Api.Machine.Machine;
 import Api.Machine.MachineRepository;
 import Api.Exceptions.ResourceNotFoundException;
@@ -30,6 +33,9 @@ public class LoginController {
 
     @Autowired
     private AuthRepository authRepository;
+
+    @Autowired
+    private LogRepository logRepository;
 
     @ApiOperation(value = "View a status of who is using each machine")
     @GetMapping("")
@@ -64,12 +70,21 @@ public class LoginController {
 
     @ApiOperation(value = "Authenticate a user by scan string for a certain machine by ID")
     @PostMapping("/logout")
-    public boolean logout(@Valid @RequestBody Long machineId){
-        return machineRepository.findById(machineId).map(machine -> {
+    public Log logout(@Valid @RequestBody LogCreator body){
+        //Get machine
+        return machineRepository.findById(body.getMachine()).map(machine -> {
+            //remove machine from status
             status.remove(machine);
-            return true;
-        }).orElseThrow(() -> new ResourceNotFoundException("MachineId " + machineId + " not found"));
+            //Get User
+            return userRepository.findById(body.getUser()).map(user -> {
+                Log newLog = new Log(body.getStart_time(), body.getEnd_time(), user, machine, body.getWitness());
+                return logRepository.save(newLog);
+                //If User not found throw error
+            }).orElseThrow(() -> new ResourceNotFoundException("UserId " + body.getUser() + " not found"));
+            //If machine not found throw error
+        }).orElseThrow(() -> new ResourceNotFoundException("MachineId " + body.getMachine() + " not found"));
     }
+
 
     @ApiOperation(value = "Set whether or not an admin is currently present")
     @PostMapping("/setadmin")

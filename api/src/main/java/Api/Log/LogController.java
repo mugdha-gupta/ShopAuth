@@ -58,7 +58,7 @@ public class LogController {
                 return logRepository.save(newLog);
                 //If User not found throw error
             }).orElseThrow(() -> new ResourceNotFoundException("userId " + body.getUser() + " not found"));
-            //If Machine Type not found throw error
+            //If machine  not found throw error
         }).orElseThrow(() -> new ResourceNotFoundException("machineId " + body.getMachine() + " not found"));
     }
 }
