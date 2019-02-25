@@ -25,13 +25,14 @@ public class Log {
     @ApiModelProperty(notes = "The id of the user who used the machine machine")
     private User user;
 
-    @Id
+
     @NotNull
     @ManyToOne
     @JoinColumn(name="machine", nullable=false)
     @ApiModelProperty(notes = "The id of the machine used")
     private Machine machine;
 
+    @Id
     @NonNull
     @ApiModelProperty(notes = "The scan string of the witness")
     private String witness;

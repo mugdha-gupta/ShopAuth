@@ -50,7 +50,7 @@ public class LogController {
     @ApiOperation(value = "Create a new authorization")
     @PostMapping("")
     public Log create(@Valid @RequestBody LogCreator body){
-        //Get machine type
+        //Get machine
         return machineRepository.findById(body.getMachine()).map(machine -> {
             //Get User
             return userRepository.findById(body.getUser()).map(user -> {

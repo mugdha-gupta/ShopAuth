@@ -7,10 +7,10 @@ import java.sql.Timestamp;
 
 public class LogCreator {
     @NonNull
-    @ApiModelProperty(notes = "The time the user started using the machine", dataType = "java.lang.String", example = "YYYY-MM-DD HH:MI:SS")
+    @ApiModelProperty(notes = "The time the user started using the machine", dataType = "java.lang.String", example = "YYYY-MM-DDTHH:MI:SS")
     private Timestamp start_time;
 
-    @ApiModelProperty(notes = "The time the user finished using the machine", dataType = "java.lang.String", example = "YYYY-MM-DD HH:MI:SS")
+    @ApiModelProperty(notes = "The time the user finished using the machine", dataType = "java.lang.String", example = "YYYY-MM-DDTHH:MI:SS")
     private Timestamp end_time;
 
     @NonNull
