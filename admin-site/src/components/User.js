@@ -5,15 +5,16 @@ import PropTypes from "prop-types";
 function User(props) {
   return (
     <div className="user">
-      <span>{props.name}</span>
-      <span>{props.email}</span>
-
+      <span>{props.name} {props.email}</span>
     </div>
   );
 }
 
 User.propTypes = {
-  name: PropTypes.string.isRequired
+  name: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired
 };
+
+
 
 export default User;
