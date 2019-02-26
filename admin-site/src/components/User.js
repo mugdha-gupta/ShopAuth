@@ -1,17 +1,19 @@
 import React from "react";
-import "./Contacts.css";
+import "./User.css";
 import PropTypes from "prop-types";
 
-function Contacts(props) {
+function User(props) {
   return (
-    <div className="contacts">
+    <div className="user">
       <span>{props.name}</span>
+      <span>{props.email}</span>
+
     </div>
   );
 }
 
-Contacts.propTypes = {
+User.propTypes = {
   name: PropTypes.string.isRequired
 };
 
-export default Contacts;
+export default User;

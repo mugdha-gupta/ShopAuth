@@ -1,15 +1,20 @@
 body {
-  background-color: #FFCC00;
+  background-color: #252525;
   padding: 20px;
   margin: 0;
 }
 h1, h2, p, ul, li {
   font-family: sans-serif;
+
+}
+h1{
+  color: #FFF;
 }
 ul.header li {
   display: inline;
   list-style-type: none;
   margin: 0;
+
 }
 ul.header {
   background-color: #111;
@@ -17,7 +22,7 @@ ul.header {
 }
 ul.header li a {
   color: #FFF;
-  font-weight: bold;
+  /*font-weight: bold;*/
   text-decoration: none;
   padding: 20px;
   display: inline-block;
@@ -34,5 +39,5 @@ ul.header li a {
   margin-bottom: 10px;
 }
 .active {
-  background-color: #0099FF;
+  background-color: #f72;
 }
