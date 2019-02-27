@@ -1,4 +1,4 @@
-#/usr/bin/python
+#!/usr/bin/python
 
 #Monitor 4 GPIO headers and print when activity detected
 #Assumes that the headers are inserted into the specific GPIO pins
