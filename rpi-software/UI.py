@@ -1,3 +1,6 @@
+import os
+os.environ['KIVY_GL_BACKEND'] = 'gl'
+import kivy
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -10,12 +13,11 @@ import json
 import time as sleep
 from datetime import datetime, date
 from datetime import time
-from kivy.core.window import Window
 
 
 user_card = ""
-machine_id = 2
-API_ENDPOINT = "http://localhost:8080/login/auth"
+machine_id = 1
+API_ENDPOINT = "http://192.168.0.2:8080/login/auth"
 apiResponse = {}
 
 global scancard
@@ -24,12 +26,13 @@ global scancard
 def scancard():
     # TODO: make sure this subprocess dies at end of function
     try:
-        p = pexpect.spawn('pcsctest', encoding='utf-8')
-        p.expect("Enter the reader number          : ")
-        p.sendline("1")
-        p.expect('Current Reader ATR Value         : ', None)
-        p.expect('Testing SCardDisconnect          : Command successful.')
-        return p.before.replace(" ", "").replace("\n", "").replace("\r", "")
+        p = pexpect.spawn('pcsc_scan')
+        p.expect("ATR:",None)
+        p.expect("ATR:",None)
+        scanString = p.before.replace(" ", "").replace("\n", "").replace("\r", "").replace("\x1b","").replace("[35m","").replace("[0m","")
+        print(scanString)
+        return scanString
+        p.kill(0)
     except pexpect.exceptions.TIMEOUT:
         return "Timeout"
     except pexpect.exceptions.EOF:
@@ -185,5 +188,4 @@ class TestApp(App):
 
 
 if __name__ == '__main__':
-    Window.fullscreen = 'auto'
     TestApp().run()
