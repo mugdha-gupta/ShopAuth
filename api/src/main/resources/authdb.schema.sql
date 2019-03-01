@@ -27,33 +27,21 @@ CREATE TABLE IF NOT EXISTS authdb.machine (
 );
 
 CREATE TABLE IF NOT EXISTS authdb.auth (
-  user_id BIGINT NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES authdb.user (id) ON DELETE RESTRICT,
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (id),
+  user BIGINT NOT NULL,
+  FOREIGN KEY (user) REFERENCES authdb.user (id) ON DELETE RESTRICT,
   type BIGINT NOT NULL,
   FOREIGN KEY (type) REFERENCES authdb.machine_type (id) ON DELETE RESTRICT
 );
 
 
 CREATE TABLE IF NOT EXISTS authdb.log (
-  start_time TIMESTAMP NOT NULL,
-  end_time TIMESTAMP NULL,
-  machine_id BIGINT NOT NULL,
-  FOREIGN KEY (machine_id) REFERENCES authdb.machine (id) ON DELETE RESTRICT,
-  user_id BIGINT NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES authdb.user (id) ON DELETE RESTRICT,
-  witness_id VARCHAR(255) NOT NULL
-);
-
-create table oauth_client_details (
-    client_id VARCHAR(256) PRIMARY KEY,
-    resource_ids VARCHAR(256),
-    client_secret VARCHAR(256),
-    scope VARCHAR(256),
-    authorized_grant_types VARCHAR(256),
-    web_server_redirect_uri VARCHAR(256),
-    authorities VARCHAR(256),
-    access_token_validity INTEGER,
-    refresh_token_validity INTEGER,
-    additional_information VARCHAR(4096),
-    autoapprove VARCHAR(256)
+  starttime TIMESTAMP NOT NULL,
+  endtime TIMESTAMP NULL,
+  machine BIGINT NOT NULL,
+  FOREIGN KEY (machine) REFERENCES authdb.machine (id) ON DELETE RESTRICT,
+  user BIGINT NOT NULL,
+  FOREIGN KEY (user) REFERENCES authdb.user (id) ON DELETE RESTRICT,
+  witness VARCHAR(255) NOT NULL
 );

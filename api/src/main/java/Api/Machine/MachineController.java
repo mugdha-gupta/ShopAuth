@@ -5,6 +5,8 @@ import Api.MachineType.MachineTypeRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -87,5 +89,12 @@ public class MachineController {
         }).orElseThrow(() -> new ResourceNotFoundException("machineId " + id + " not found"));
     }
 
+    @ApiOperation(value = "Get a page of logs")
+    @PostMapping("/getPage")
+    public List<Machine> page(@RequestParam("page") int page,
+                          @RequestParam("size") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return machineRepository.findAll(pageable).getContent();
+    }
 
 }

@@ -4,6 +4,8 @@ import Api.Exceptions.ResourceNotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,14 @@ public class MachineTypeController {
     @GetMapping("")
     public List<MachineType> index(){
         return machineTypeRepository.findAll();
+    }
+
+    @ApiOperation(value = "Get a page of users")
+    @PostMapping("/getPage")
+    public List<MachineType> page(@RequestParam("page") int page,
+                           @RequestParam("size") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return machineTypeRepository.findAll(pageable).getContent();
     }
 
     @ApiOperation(value = "Get a certain machine type by ID")
