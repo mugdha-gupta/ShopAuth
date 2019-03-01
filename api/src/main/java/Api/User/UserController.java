@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/user")
 @Api(value = "User", description="Operations pertaining to the users of the system", tags = {"User"})

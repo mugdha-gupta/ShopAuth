@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 function User(props) {
   return (
     <div className="user">
-      <span>{props.name} {props.email}</span>
+      <span>{props.name} test {props.email}</span>
     </div>
   );
 }

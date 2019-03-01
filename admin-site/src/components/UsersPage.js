@@ -8,6 +8,8 @@ class UsersPage extends Component {
     users: []
   };
 
+  
+
   componentDidMount() {
     axios
       .get("http://localhost:8080/user")
@@ -41,6 +43,7 @@ class UsersPage extends Component {
         <p>here are the users</p>
         <UserList usersarray={this.state.users} />
       </div>
+
 
     );
   }

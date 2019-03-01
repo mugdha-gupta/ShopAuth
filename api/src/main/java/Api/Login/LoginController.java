@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.concurrent.ConcurrentHashMap;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/login")
 @Api(description="Operations pertaining to logging students into machines", tags = {"Login"})
