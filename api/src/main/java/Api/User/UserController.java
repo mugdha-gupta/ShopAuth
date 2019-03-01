@@ -1,9 +1,12 @@
 package Api.User;
 
 import Api.Exceptions.ResourceNotFoundException;
+import Api.Log.Log;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +25,14 @@ public class UserController {
     @GetMapping("")
     public List<User> getAllUsers(){
         return userRepository.findAll();
+    }
+
+    @ApiOperation(value = "Get a page of users")
+    @PostMapping("/getPage")
+    public List<User> page(@RequestParam("page") int page,
+                          @RequestParam("size") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findAll(pageable).getContent();
     }
 
     @ApiOperation(value = "Get a certain user by ID")
