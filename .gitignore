@@ -6,4 +6,5 @@ application.properties
 ./api/src/main/resources/application.properties
 disk.img
 ./admin-site/node_modules
-
+admin/node_modules
+node_modules
