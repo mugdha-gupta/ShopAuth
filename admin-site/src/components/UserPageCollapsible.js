@@ -1,15 +1,19 @@
 import React, { Component } from "react";
+import "./UserPageCollapsible.css";
 import axios from "axios";
 import UserListCollapsible from "./UserListCollapsible";
 import Collapsible from 'react-collapsible';
 
 class UsersPageCollapsible extends Component {
-
-  state = {
-    users: []
-  };
-
+  constructor(){
+      super()
+      this.state = {
+        input: "",
+        users: [],
+      }
+  }
   
+
 
   componentDidMount() {
     axios
@@ -28,7 +32,8 @@ class UsersPageCollapsible extends Component {
         // create a new "State" object without mutating 
         // the original State object. 
         const newState = Object.assign({}, this.state, {
-          users: newUsers
+          users: newUsers,
+          filteredUsers: newUsers
         });
 
         // store the new state object in the component's state
@@ -38,15 +43,40 @@ class UsersPageCollapsible extends Component {
   }
 
   render() {
+
+    var fUsers = this.state.users.filter((user) => {
+        let userName = user.name.toLowerCase()
+        return userName.includes(this.state.input.toLowerCase())
+      });
+
     return (
+      
+
       <div>
         <h2>USERS</h2>
-        <UserListCollapsible usersarray={this.state.users} />
+        <input type={this.state.input} id="myInput" onChange={this.myFunction.bind(this)} placeholder="Search for names.."/>
+                
+        <UserListCollapsible usersarray={fUsers}/>
+
       </div>
 
 
     );
   }
-}
- 
+
+  myFunction(event){
+      this.setState({
+        input : event.target.value
+      })
+
+    }
+
+
+  }
+
+
+
+
+
+   
 export default UsersPageCollapsible;
