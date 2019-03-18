@@ -66,17 +66,18 @@ public class MachineController {
 
     @ApiOperation(value = "Update an existing machine")
     @PutMapping("/{id}")
-    public Machine update(@PathVariable Long id, @Valid @RequestBody MachineCreator body){
+    public Machine update(@PathVariable Long id, @Valid @RequestBody MachineUpdater body){
         return machineRepository.findById(id).map(machine -> {
-            machine.setDisplayname(body.getDisplayname());
-            if(body.getType()==null) {
-                machine.setType(null);
-                return machineRepository.save(machine);
+            if(body.getDisplayname()!=null) {
+                machine.setDisplayname(body.getDisplayname());
             }
-            return machineTypeRepository.findById(body.getType()).map(machineType -> {
-                machine.setType(machineType);
-                return machineRepository.save(machine);
-            }).orElseThrow(() -> new ResourceNotFoundException("machineTypeId " + body.getType() + " not found"));
+            if(body.getType()!=null) {
+                return machineTypeRepository.findById(body.getType()).map(machineType -> {
+                    machine.setType(machineType);
+                    return machineRepository.save(machine);
+                }).orElseThrow(() -> new ResourceNotFoundException("machineTypeId " + body.getType() + " not found"));
+            }
+            return machine;
         }).orElseThrow(() -> new ResourceNotFoundException("machineId " + id + " not found"));
     }
 

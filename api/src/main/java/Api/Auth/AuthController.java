@@ -50,8 +50,8 @@ public class AuthController {
 
     @ApiOperation(value = "Get a a list of auths for certain type of machine")
     @PostMapping("/findByType")
-    public List<Auth> findByType(@Valid @RequestBody Long typeId){
-        return authRepository.findByTypeId(typeId);
+    public List<Auth> findByType(@Valid @RequestBody Id typeId){
+        return authRepository.findByTypeId(typeId.getId());
     }
 
     @ApiOperation(value = "Create a new authorization")
