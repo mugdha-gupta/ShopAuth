@@ -6,6 +6,8 @@ import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
 
 const { SearchBar } = Search;
 
+const rowStyle = { textAlign: "center" };
+
 const columns = [{
     dataField: 'id',
     text: 'User ID',
@@ -142,7 +144,7 @@ class UsersPageCollapsible extends Component {
           search>
             {
               props => (
-                <div>
+                <div style={ rowStyle }>
                   <SearchBar { ...props.searchProps } 
                     placeholder="Search Users"
                   />
@@ -150,6 +152,7 @@ class UsersPageCollapsible extends Component {
                   <BootstrapTable
                     { ...props.baseProps }
                     expandRow={ expandRow } 
+                    rowStyle={ rowStyle }
                   />
                 </div>
               )
