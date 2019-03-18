@@ -1,19 +1,45 @@
+import 'bootstrap/dist/css/bootstrap.min.css'; 
 import React, { Component } from "react";
-import "./UserPageCollapsible.css";
 import axios from "axios";
 import UserListCollapsible from "./UserListCollapsible";
 import Collapsible from 'react-collapsible';
+import BootstrapTable from 'react-bootstrap-table-next';
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
+
+const columns = [{
+    dataField: 'id',
+    text: 'User ID',
+    sort: true
+  }, {
+    dataField: 'name',
+    text: 'User Name',
+    filter: textFilter(),
+    sort: true
+  }, {
+    dataField: 'email',
+    text: 'User Email',
+    filter: textFilter(),
+    sort: true
+  }];
+
+  const expandRow = {
+  renderer: row => (
+    <div>
+      <p>{ 'This Expand row is belong to rowKey {row.id}' }</p>
+      <p>You can render anything here, also you can add additional data on every row object</p>
+      <p>expandRow.renderer callback will pass the origin row object to you</p>
+    </div>
+  )
+};
 
 class UsersPageCollapsible extends Component {
   constructor(){
       super()
       this.state = {
-        input: "",
         users: [],
       }
   }
   
-
 
   componentDidMount() {
     axios
@@ -43,40 +69,23 @@ class UsersPageCollapsible extends Component {
   }
 
   render() {
-
-    var fUsers = this.state.users.filter((user) => {
-        let userName = user.name.toLowerCase()
-        return userName.includes(this.state.input.toLowerCase())
-      });
-
     return (
       
-
       <div>
         <h2>USERS</h2>
-        <input type={this.state.input} id="myInput" onChange={this.myFunction.bind(this)} placeholder="Search for names.."/>
-                
-        <UserListCollapsible usersarray={fUsers}/>
-
+        <BootstrapTable 
+          striped
+          hover
+          keyField='id' 
+          data={this.state.users} 
+          columns={columns}
+          filter={filterFactory()}
+          expandRow={ expandRow } />
       </div>
 
 
     );
   }
-
-  myFunction(event){
-      this.setState({
-        input : event.target.value
-      })
-
-    }
-
-
-  }
-
-
-
-
-
+}
    
 export default UsersPageCollapsible;
