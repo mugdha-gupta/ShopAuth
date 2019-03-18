@@ -44,8 +44,8 @@ public class AuthController {
 
     @ApiOperation(value = "Get a a list of auths for certain user")
     @PostMapping("/findByUser")
-    public List<Auth> findByUser(@Valid @RequestBody Long userId){
-        return authRepository.findByUserId(userId);
+    public List<Auth> findByUser(@Valid @RequestBody Id userId){
+        return authRepository.findByUserId(userId.getId());
     }
 
     @ApiOperation(value = "Get a a list of auths for certain type of machine")
