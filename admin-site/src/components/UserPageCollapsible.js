@@ -2,7 +2,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component } from "react";
 import axios from "axios";
 import BootstrapTable from 'react-bootstrap-table-next';
-import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
+import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
+
+const { SearchBar } = Search;
 
 const columns = [{
     dataField: 'id',
@@ -11,12 +13,10 @@ const columns = [{
   }, {
     dataField: 'name',
     text: 'User Name',
-    filter: textFilter({placeholder: 'Search by Name'}),
     sort: true
   }, {
     dataField: 'email',
     text: 'User Email',
-    filter: textFilter({placeholder: 'Search by Email'}),
     sort: true
   }];
 
@@ -27,12 +27,10 @@ const columns = [{
   }, {
     dataField: 'typeName',
     text: 'Machine Type Name',
-    filter: textFilter({placeholder: 'Search by Type Name'}),
     sort: true
   }, {
     dataField: 'typeId',
     text: 'Machine Type Id',
-    filter: textFilter({placeholder: 'Search by Type Id'}),
     sort: true
   }];
 
@@ -110,29 +108,54 @@ class UsersPageCollapsible extends Component {
   render() {
     const expandRow = {
         renderer: row => (
-          <div>
-            <BootstrapTable 
+          <div style={{marginLeft: 50}}>
+            <ToolkitProvider
               keyField='id' 
               data={this.state.userAuths[row.id]} 
               columns={authColumns}
-              filter={filterFactory()}
-              expandRow={ expandRow } />
+              search
+            >
+              {
+                props => (
+                  <div>
+                    <SearchBar { ...props.searchProps } 
+                      placeholder="Search Authorizations"
+                    />
+                    <hr />
+                    <BootstrapTable
+                      { ...props.baseProps }
+                    />
+                  </div>
+                )
+              }
+            </ToolkitProvider>
           </div>
         ),
         onExpand: this.handleOnExpand
       };
     return (
       <div>
-        <h2>USERS</h2>
-        <BootstrapTable 
+        <ToolkitProvider 
           keyField='id' 
           data={this.state.users} 
           columns={columns}
-          filter={filterFactory()}
-          expandRow={ expandRow } />
+          search>
+            {
+              props => (
+                <div>
+                  <SearchBar { ...props.searchProps } 
+                    placeholder="Search Users"
+                  />
+                  <hr />
+                  <BootstrapTable
+                    { ...props.baseProps }
+                    expandRow={ expandRow } 
+                  />
+                </div>
+              )
+            }
+          </ToolkitProvider>
       </div>
-
-
     );
   }
 }
