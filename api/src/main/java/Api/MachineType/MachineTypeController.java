@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/machinetype")
 @Api(value = "MachineType", description="Operations pertaining to types of machines", tags = {"MachineType"})

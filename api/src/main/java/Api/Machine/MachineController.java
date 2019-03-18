@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/machine")
 @Api(value = "Machine", description="Operations pertaining to machines that can be logged into", tags = {"Machine"})
