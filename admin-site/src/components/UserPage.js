@@ -1,8 +1,9 @@
-import 'bootstrap/dist/css/bootstrap.min.css'; 
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import React, { Component } from "react";
 import axios from "axios";
 import BootstrapTable from 'react-bootstrap-table-next';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
+import "./InnerTable.css";
 
 const { SearchBar } = Search;
 
@@ -123,22 +124,24 @@ class UsersPage extends Component {
       //What html to use to render inner auth tables
       renderer: row => (
         // add margin here to indent from outer table
-        <div style={{marginLeft: 50}}>
+        <div style={{paddingLeft: 50}}>
           <ToolkitProvider
             keyField='typeId' 
             data={this.state.userAuths[row.id]} 
             columns={authColumns}
+            wrapperClasses="innerTable"
             search
           >
             {
               props => (
                 <div>
-                  <div style={{float: "right"}}>
+                  <div style={{float: "right", marginTop: 10, marginRight: 10}}>
                     <SearchBar { ...props.searchProps } 
                       placeholder="Search Authorizations"
                     />
                   </div>
                   <BootstrapTable
+                    wrapperClasses="innerTable"
                     { ...props.baseProps }
                     bordered={ false }
                     noDataIndication="User is not trained for any machine"
