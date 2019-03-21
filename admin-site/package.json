@@ -14,6 +14,7 @@
     "react-bootstrap-table-next": "^3.0.2",
     "react-bootstrap-table2-filter": "^1.1.7",
     "react-bootstrap-table2-paginator": "^2.0.4",
+    "react-bootstrap-table2-toolkit": "^1.4.0",
     "react-collapsible": "^2.6.0",
     "react-dom": "^16.8.3",
     "react-router-dom": "^4.3.1",
