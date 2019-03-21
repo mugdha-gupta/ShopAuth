@@ -8,7 +8,11 @@ import refresh from "../assets/refresh.svg"
 const { SearchBar } = Search;
 
 const rowStyle = { 
-  textAlign: "center",
+  textAlign: "center"
+};
+
+const leftToRight= { 
+  float: "right"
 };
 
 const columns = [{
@@ -69,14 +73,17 @@ class UsersPageCollapsible extends Component {
             {
               props => (
                 <div style={ rowStyle }>
-                  <SearchBar { ...props.searchProps } 
-                    placeholder="Search Logins"
-                  />
-                  <button><img src={refresh} alt="Refresh" onClick={this.refresh.bind(this)}/></button>
-                  <hr />
+                  <div style={{ display: "flex", flexDirection: "row", float: "right"}}>
+                    <SearchBar { ...props.searchProps } 
+                      placeholder="Search Logins"
+                      style={{float: "left"}}
+                    />
+                    <button style={{float: "right"}}><img src={refresh} alt="Refresh" onClick={this.refresh.bind(this)}/></button>
+                  </div>
                   <BootstrapTable
                     { ...props.baseProps }
                     rowStyle={ rowStyle }
+                    bordered={ false }
                   />
                 </div>
               )
