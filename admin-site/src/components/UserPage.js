@@ -76,7 +76,7 @@ class UsersPageCollapsible extends Component {
   }
 
   handleOnExpand = (row, isExpand, rowIndex, e) => {
-    if(isExpand && this.state.userAuths[row.id] != []){
+    if(isExpand && this.state.userAuths[row.id] !== []){
       axios
         .post("http://localhost:8080/auth/findByUser", {
           id: row.id
