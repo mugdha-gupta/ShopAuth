@@ -58,7 +58,7 @@ public class LoginController {
         AuthReturn authReturn = new AuthReturn();
         return machineRepository.findById(body.getMachine_id()).map(machine ->
                 userRepository.findByScanString(body.getScan_string()).map(user -> {
-                    boolean auth = authRepository.findByUserIdAndTypeId(user.getId(), machine.getId()).isPresent();
+                    boolean auth = authRepository.findByUserIdAndTypeId(user.getId(), machine.getType().getId()).isPresent();
                     if(auth) {
                         status.put(machine, new UserMachine(user, machine));
                     }

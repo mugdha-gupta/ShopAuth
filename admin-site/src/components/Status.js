@@ -98,6 +98,7 @@ class Status extends Component {
                   <BootstrapTable
                     { ...props.baseProps }
                     bordered={ false }
+                    noDataIndication="No machines are in use"
                   />
                 </div>
               )

@@ -141,6 +141,7 @@ class UsersPage extends Component {
                   <BootstrapTable
                     { ...props.baseProps }
                     bordered={ false }
+                    noDataIndication="User is not trained for any machine"
                   />
                 </div>
               )
@@ -179,6 +180,7 @@ class UsersPage extends Component {
                     { ...props.baseProps }
                     expandRow={ expandRow } 
                     bordered={ false }
+                    noDataIndication="There are no users"
                   />
                 </div>
               )
