@@ -4,11 +4,10 @@ import {
   NavLink,
   HashRouter
 } from "react-router-dom";
-import Home from "./Home";
+import Status from "./components/Status"
 import Stuff from "./Stuff";
 import Contact from "./Contact";
-import UsersPage from "./components/UsersPage";
-import UserPageCollapsible from "./components/UserPageCollapsible"
+import UserPage from "./components/UserPage"
 
  
 class Main extends Component {
@@ -19,18 +18,16 @@ class Main extends Component {
         <div>
           <h1>Machine Shop Authorization</h1>
           <ul className="header">
-            <li><NavLink exact to="/">Home</NavLink></li>
+            <li><NavLink exact to="/">Status</NavLink></li>
             <li><NavLink to="/stuff">Stuff</NavLink></li>
             <li><NavLink to="/contact">Contact</NavLink></li>
             <li><NavLink to="/users">Users</NavLink></li>
-            <li><NavLink to="/test">test</NavLink></li>
           </ul>
           <div className="content">
-            <Route exact path="/" component={Home}/>
+            <Route exact path="/" component={Status}/>
             <Route path="/stuff" component={Stuff}/>
             <Route path="/contact" component={Contact}/> 
-            <Route path="/users" component={UsersPage}/> 
-            <Route path = "/test" component={UserPageCollapsible}/>
+            <Route path="/users" component={UserPage}/> 
           </div>
         </div>
       </HashRouter>

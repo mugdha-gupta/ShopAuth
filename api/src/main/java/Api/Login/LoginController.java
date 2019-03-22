@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 @CrossOrigin
@@ -24,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LoginController {
 
     private boolean adminPresent = false;
-    private ConcurrentHashMap<Machine, User> status = new ConcurrentHashMap<Machine, User>();
+    private ConcurrentHashMap<Machine, UserMachine> status = new ConcurrentHashMap<>();
 
     @Autowired
     private UserRepository userRepository;
@@ -40,15 +41,15 @@ public class LoginController {
 
     @ApiOperation(value = "View a status of who is using each machine")
     @GetMapping("")
-    public ConcurrentHashMap<Machine, User> showall(){
-        return status;
+    public ArrayList<UserMachine> showall(){
+        return new ArrayList<UserMachine>(status.values());
     }
 
 
     @ApiOperation(value = "See who is using a certain machine by ID")
     @GetMapping("/{id}")
     public User show(@PathVariable Long id){
-        return machineRepository.findById(id).map(machine -> status.get(machine)).orElseThrow(() -> new ResourceNotFoundException("machineId " + id + "not found"));
+        return machineRepository.findById(id).map(machine -> status.get(machine).getUser()).orElseThrow(() -> new ResourceNotFoundException("machineId " + id + "not found"));
     }
 
     @ApiOperation(value = "Authenticate a user by scan string for a certain machine by ID")
@@ -57,9 +58,9 @@ public class LoginController {
         AuthReturn authReturn = new AuthReturn();
         return machineRepository.findById(body.getMachine_id()).map(machine ->
                 userRepository.findByScanString(body.getScan_string()).map(user -> {
-                    boolean auth = authRepository.findByUserIdAndTypeId(user.getId(), machine.getId()).isPresent();
+                    boolean auth = authRepository.findByUserIdAndTypeId(user.getId(), machine.getType().getId()).isPresent();
                     if(auth) {
-                        status.put(machine, user);
+                        status.put(machine, new UserMachine(user, machine));
                     }
                     authReturn.setAuthenticated(auth);
                     authReturn.setNeedWitness(!adminPresent && user.getAdmin_level()!=2);

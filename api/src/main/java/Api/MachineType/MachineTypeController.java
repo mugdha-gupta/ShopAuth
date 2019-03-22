@@ -27,7 +27,7 @@ public class MachineTypeController {
         return machineTypeRepository.findAll();
     }
 
-    @ApiOperation(value = "Get a page of users")
+    @ApiOperation(value = "Get a page of machineTypes")
     @PostMapping("/getPage")
     public List<MachineType> page(@RequestParam("page") int page,
                            @RequestParam("size") int size){
@@ -55,10 +55,14 @@ public class MachineTypeController {
 
     @ApiOperation(value = "Update an existing machine type")
     @PutMapping("/{id}")
-    public MachineType update(@PathVariable Long id, @Valid @RequestBody MachineTypeCreator body){
+    public MachineType update(@PathVariable Long id, @Valid @RequestBody MachineTypeUpdater body){
         return machineTypeRepository.findById(id).map(machineType -> {
-            machineType.setDisplayname(body.getDisplayname());
-            machineType.setTime1(body.getTime1());
+            if(body.getDisplayname()!=null){
+                machineType.setDisplayname(body.getDisplayname());
+            }
+            if(body.getTime1()!=null) {
+                machineType.setTime1(body.getTime1());
+            }
             return machineTypeRepository.save(machineType);
         }).orElseThrow(() -> new ResourceNotFoundException("machineTypeId " + id + " not found"));
     }

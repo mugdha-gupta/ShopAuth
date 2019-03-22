@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 @Entity

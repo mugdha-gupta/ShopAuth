@@ -1,7 +1,6 @@
 package Api.User;
 
 import Api.Exceptions.ResourceNotFoundException;
-import Api.Log.Log;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,12 +55,20 @@ public class UserController {
 
     @ApiOperation(value = "Update an existing user")
     @PutMapping("/{id}")
-    public User update(@PathVariable Long id, @Valid @RequestBody UserCreator postRequest){
+    public User update(@PathVariable Long id, @Valid @RequestBody UserUpdater postRequest){
         return userRepository.findById(id).map(user -> {
-            user.setName(postRequest.getName());
-            user.setEmail(postRequest.getEmail());
-            user.setScanString(postRequest.getScanString());
-            user.setAdmin_level(postRequest.getAdmin_level());
+            if(postRequest.getName()!=null) {
+                user.setName(postRequest.getName());
+            }
+            if(postRequest.getEmail()!=null) {
+                user.setEmail(postRequest.getEmail());
+            }
+            if(postRequest.getScanString()!=null) {
+                user.setScanString(postRequest.getScanString());
+            }
+            if(postRequest.getAdmin_level()!=-1) {
+                user.setAdmin_level(postRequest.getAdmin_level());
+            }
             return userRepository.save(user);
         }).orElseThrow(() -> new ResourceNotFoundException("UserId " + id + " not found"));
     }
