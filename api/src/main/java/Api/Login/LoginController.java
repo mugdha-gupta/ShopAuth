@@ -75,8 +75,13 @@ public class LoginController {
     public Log logout(@Valid @RequestBody LogCreator body){
         //Get machine
         return machineRepository.findById(body.getMachine()).map(machine -> {
-            //remove machine from status
-            status.remove(machine);
+            //check if the user has logged into the machine
+            if (status.containsKey(machine))
+                //remove machine from status
+                status.remove(machine);
+            else
+                //if the machine is not in use throw error
+                throw new ResourceNotFoundException("MachineId " + body.getMachine() + " not in use currently");
             //Get User
             return userRepository.findById(body.getUser()).map(user -> {
                 Log newLog = new Log(body.getStart_time(), body.getEnd_time(), user, machine, body.getWitness());
