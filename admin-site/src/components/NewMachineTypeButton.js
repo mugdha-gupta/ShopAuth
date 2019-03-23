@@ -92,7 +92,7 @@ class NewMachineTypeButton extends Component {
 
   render() {
     return (
-      <div>
+      <span>
         <Button type="primary" icon="plus" ghost onClick={this.showModal}>Add New Machine Type</Button>
         <CollectionCreateForm
           wrappedComponentRef={this.saveFormRef}
@@ -100,7 +100,7 @@ class NewMachineTypeButton extends Component {
           onCancel={this.handleCancel}
           onCreate={this.handleCreate}
         />
-      </div>
+      </span>
     );
   }
 }
