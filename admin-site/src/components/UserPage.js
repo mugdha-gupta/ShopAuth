@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import BootstrapTable from 'react-bootstrap-table-next';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
+import { Button, Icon } from 'antd';
 
 const { SearchBar } = Search;
 
@@ -59,6 +60,7 @@ class UsersPage extends Component {
         // Dictionary that maps a user to all the auths associated to the user
         userAuths: {}
       }
+      this.routeChange = this.routeChange.bind(this);
   }
   
 
@@ -126,6 +128,11 @@ class UsersPage extends Component {
       }
   }
 
+  routeChange(e){
+    let path = '/adduser';
+    this.props.history.push(path);
+  }
+
   render() {
     //Properties to use when a row is expanded in user table
     const expandRow = {
@@ -179,6 +186,9 @@ class UsersPage extends Component {
               props => (
                 <div style={rowStyle}>
                   <div style={{float: "right"}}>
+                    <Button type="primary" size="large" ghost onClick={this.routeChange}>
+                      <Icon type="user-add" />Add User
+                    </Button>
                     <SearchBar 
                       { ...props.searchProps } 
                       placeholder="Search Users"

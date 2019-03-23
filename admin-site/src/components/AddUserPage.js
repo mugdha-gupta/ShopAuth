@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import {Form, Input, Radio, Tooltip, Icon, Button,} from 'antd';
-import "antd/dist/antd.css";
+
 
 const RadioGroup = Radio.Group;
 
@@ -117,8 +117,8 @@ class RegistrationForm extends Component {
         <Form.Item
           label="Admin Level"
         >
-          {getFieldDecorator('adminlevel', {rules: [{required: true, message: 'Please choose an admin level'}]})(
-            <RadioGroup name="radiogroup" initialValue={1}>
+          {getFieldDecorator('adminlevel', {initialValue: 1},{rules: [{required: true, message: 'Please choose an admin level'}]})(
+            <RadioGroup name="radiogroup">
               <Radio value={1}>Level 1</Radio>
               <Radio value={2}>Level 2</Radio>
               <Radio value={3}>Level 3</Radio>
