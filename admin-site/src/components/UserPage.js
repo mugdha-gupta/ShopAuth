@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import axios from "axios";
-import {Table, List, Input, Button, Icon} from 'antd';
+import {Table, List, Input, Divider} from 'antd';
 import NewUserButton from './NewUserButton'
+import EditUserButton from './EditUserButton'
+import DeleteUserButton from './DeleteUserButton'
 
 const columns = [{
   title: 'User ID',
@@ -16,15 +18,23 @@ const columns = [{
   title: 'Email',
   dataIndex: 'email',
    sorter: (a, b) => {if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-                     if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;},
+                     if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+    }
+}, {
+  title: 'Action',
+  key: 'action',
+  render: (text, record) => (
+    <span>
+      <EditUserButton 
+        user = {record}
+      />
+      <Divider type="vertical" />
+      <DeleteUserButton 
+        id = {record.id}
+      />
+    </span>
+  ),
 }];
-
-const data = [
-  'Saw',
-  'Lathe',
-  'Planer',
-  'Drill',
-];
 
 const Search = Input.Search;
 
@@ -34,6 +44,8 @@ class UserPage extends Component {
       this.state = {
         // List of all users in the system
         users: [],
+        // List of users after filter
+        filteredUsers: [],
         // Dictionary that maps a user to all the auths associated to the user
         userAuths: {},
         //List of auths obtained
@@ -41,7 +53,8 @@ class UserPage extends Component {
         sortedInfo: null,
       }
 
-      this.expandIcon = this.expandIcon.bind(this);
+      this.expandRow = this.expandRow.bind(this);
+      this.filterUsers = this.filterUsers.bind(this);
   }
 
   componentDidMount() {
@@ -57,6 +70,8 @@ class UserPage extends Component {
             id: u.id,
             name: u.name,
             email: u.email,
+            cardid: u.scanString,
+            admin: u.admin_level
           };
         });
       
@@ -64,7 +79,8 @@ class UserPage extends Component {
         // the original State object. 
         const newState = Object.assign({}, this.state, {
           users: newUsers,
-          userAuths: newUserAuths
+          userAuths: newUserAuths,
+          filteredUsers: newUsers
         });
 
         // store the new state object in the component's state
@@ -73,7 +89,7 @@ class UserPage extends Component {
       .catch(error => console.log(error));
   }
 
-  expandIcon = (record)  => {
+  expandRow = (record)  => {
 
     //Call api to get auths for expanded user if the row is expanded and it has not already been retrieved
     if(!this.state.obtainedAuths.includes(record.name)){
@@ -120,6 +136,19 @@ class UserPage extends Component {
     );
   }
 
+  filterUsers(value){
+    console.log(value)
+      var fUsers = this.state.users.filter((user) => {
+        let userName = user.name.toLowerCase()
+        let userEmail = user.email.toLowerCase()
+        return userName.includes(value.toLowerCase()) || userEmail.includes(value.toLowerCase())
+      });
+      const newState = Object.assign({}, this.state, {
+            filteredUsers: fUsers
+      });
+      this.setState(newState);
+    }
+
   render() {
     return (
       <div>
@@ -130,16 +159,16 @@ class UserPage extends Component {
         <div style={{float: "right"}}>
           <Search
           placeholder="Search users"
-          onSearch={value => console.log(value)}
+          onSearch={this.filterUsers}
           style={{ width: 200 }}
           //enterButton
           />
         </div>
         <Table 
           rowKey="id" 
-          dataSource={this.state.users} 
+          dataSource={this.state.filteredUsers} 
           columns={columns} 
-          expandedRowRender={this.expandIcon}
+          expandedRowRender={this.expandRow}
         />
       </div>
     );

@@ -13,34 +13,26 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
     
     render() {
       const {
-        visible, onCancel, onCreate, form,
+        visible, onCancel, onCreate, form, user
       } = this.props;
       const { getFieldDecorator } = form;
 
       return (
         <Modal
           visible={visible}
-          title="Add a New User"
-          okText="Add"
+          title={user.name}
+          okText="Save"
           onCancel={onCancel}
           onOk={onCreate}
         >
                 <Form layout="vertical">
 
         <Form.Item
-          label="First Name"
+          label="Name"
         >
-          {getFieldDecorator('firstname', {
-            rules: [{ required: true, message: 'Please enter a first name', whitespace: true }],
-          })(
-            <Input />
-          )}
-        </Form.Item>
-        <Form.Item
-          label="Last Name"
-        >
-          {getFieldDecorator('lastname', {
-            rules: [{ required: true, message: 'Please enter a last name', whitespace: true }],
+          {getFieldDecorator('name', {
+            initialValue: user.name,
+            rules: [{ required: true, message: 'Please enter a name', whitespace: true }],
           })(
             <Input />
           )}
@@ -49,6 +41,7 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
           label="E-mail"
         >
           {getFieldDecorator('email', {
+            initialValue: user.email,
             rules: [{
               type: 'email', message: 'Not a valid e-mail address',
             }, {
@@ -71,15 +64,16 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
           )}
         >
           {getFieldDecorator('cardid', {
+            initialValue: user.cardid,
             rules: [{ required: true, message: 'Please enter a comet card ID', whitespace: true }],
           })(
-            <Input.Password />
+            <Input.Password/>
           )}
         </Form.Item>
         <Form.Item
           label="Admin Level"
         >
-          {getFieldDecorator('adminlevel', {initialValue: 1},{rules: [{required: true, message: 'Please choose an admin level'}]})(
+          {getFieldDecorator('adminlevel', {initialValue: user.admin},{rules: [{required: true, message: 'Please choose an admin level'}]})(
             <RadioGroup name="radiogroup">
               <Radio value={1}>Level 1</Radio>
               <Radio value={2}>Level 2</Radio>
@@ -94,7 +88,7 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
   }
 );
 
-class NewUserButton extends Component {
+class EditUserButton extends Component {
   state = {
     visible: false,
   };
@@ -109,19 +103,20 @@ class NewUserButton extends Component {
 
   handleCreate = () => {
     const form = this.formRef.props.form;
+    const id = this.formRef.props.user.id;
     form.validateFields((err, values) => {
       if (err) {
         return;
       }
 
       console.log('Received values of form: ', values);
-      const name = values.firstname + ' ' + values.lastname;
+      const name = values.name;
         const email = values.email;
         const cardid = values.cardid;
         const adminlevel = values.adminlevel;
         console.log('Received values of form: ', name, email, cardid, adminlevel);
         axios
-        .post("http://localhost:8080/user", {name:name, email:email, admin_level:adminlevel, scanString:cardid})
+        .put("http://localhost:8080/user/"+id, {name:name, email:email, admin_level:adminlevel, scanString:cardid})
         .then(response => {
           alert('success');
           
@@ -129,7 +124,7 @@ class NewUserButton extends Component {
         .catch((error) => {
           // Error
           console.log(error);
-          alert('error could not post');
+          alert('error could not save');
 
       });
       form.resetFields();
@@ -140,20 +135,21 @@ class NewUserButton extends Component {
   saveFormRef = (formRef) => {
     this.formRef = formRef;
   }
-
+  
   render() {
     return (
       <span>
-        <Button type="primary" icon="user-add" ghost onClick={this.showModal}>Add New User</Button>
+        <Button type="primary" icon="edit" ghost onClick={this.showModal}>Edit</Button>
         <CollectionCreateForm
           wrappedComponentRef={this.saveFormRef}
           visible={this.state.visible}
           onCancel={this.handleCancel}
           onCreate={this.handleCreate}
+          user={this.props.user}
         />
       </span>
     );
   }
 }
 
-export default NewUserButton;
+export default EditUserButton;
