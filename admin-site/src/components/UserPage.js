@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import {Table, List, Input, Button} from 'antd';
+import {Table, List, Input, Button, Icon} from 'antd';
 import NewUserButton from './NewUserButton'
 
 const columns = [{
@@ -36,8 +36,12 @@ class UserPage extends Component {
         users: [],
         // Dictionary that maps a user to all the auths associated to the user
         userAuths: {},
+        //List of auths obtained
+        obtainedAuths: [],
         sortedInfo: null,
       }
+
+      this.expandIcon = this.expandIcon.bind(this);
   }
 
   componentDidMount() {
@@ -55,7 +59,7 @@ class UserPage extends Component {
             email: u.email,
           };
         });
-
+      
         // create a new "State" object without mutating 
         // the original State object. 
         const newState = Object.assign({}, this.state, {
@@ -67,6 +71,53 @@ class UserPage extends Component {
         this.setState(newState);
       })
       .catch(error => console.log(error));
+  }
+
+  expandIcon = (record)  => {
+
+    //Call api to get auths for expanded user if the row is expanded and it has not already been retrieved
+    if(!this.state.obtainedAuths.includes(record.name)){
+      axios
+        .post("http://localhost:8080/auth/findByUser", {
+          id: record.id
+        })
+        .then(response => {
+
+          // create an array of users only with relevant data
+          const newAuths = response.data.map(u => {
+            return {
+              userId: u.user.id,
+              typeName: u.type.displayname,
+              typeId: u.type.id
+            };
+          });
+
+          var newUserAuths = this.state.userAuths;
+          newUserAuths[record.id] = newAuths;
+
+          // Add user to list of users where auths were obtained to avoid repeat retrievals
+          var newObtainedAuths = this.state.obtainedAuths;
+          newObtainedAuths.push(record.name);
+
+          // create a new "State" object without mutating 
+          // the original State object. 
+          const newState = Object.assign({}, this.state, {
+            userAuths: newUserAuths,
+            obtainedAuths: newObtainedAuths
+          });
+
+          // store the new state object in the component's state
+          this.setState(newState);
+        })
+        .catch(error => console.log(error));
+    }
+    return (
+      <List
+        header={<div style={{fontWeight: "bold"}}> Authorized Machines</div>}
+        dataSource={this.state.userAuths[record.id]}
+        renderItem={item => (<List.Item>- {item.typeName}</List.Item>)}
+      />
+    );
   }
 
   render() {
@@ -84,15 +135,12 @@ class UserPage extends Component {
           //enterButton
           />
         </div>
-        <Table rowKey="id" dataSource={this.state.users} columns={columns} 
-        expandedRowRender={record => 
-          <List
-            header={<div style={{fontWeight: "bold"}}> Authorized Machines</div>}
-            dataSource={data}
-            renderItem={item => (<List.Item>- {item}</List.Item>)}
+        <Table 
+          rowKey="id" 
+          dataSource={this.state.users} 
+          columns={columns} 
+          expandedRowRender={this.expandIcon}
         />
-
-        }/>
       </div>
     );
   }
