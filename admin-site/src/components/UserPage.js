@@ -1,24 +1,27 @@
 import React, { Component } from "react";
 import axios from "axios";
-import {Table, List, Input, Divider} from 'antd';
+import {Table, List, Divider, AutoComplete} from 'antd';
 import NewUserButton from './NewUserButton'
 import EditUserButton from './EditUserButton'
 import DeleteUserButton from './DeleteUserButton'
 
-const columns = [{
-  title: 'User ID',
-  dataIndex: 'id',
-  sorter: (a, b) => a.id - b.id,
-}, {
+const columns = [
+{
   title: 'Name',
   dataIndex: 'name',
   sorter: (a, b) => {if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-                     if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;},
+                     if(a.name.toLowerCase() >= b.name.toLowerCase()) return 1;},
 }, {
   title: 'Email',
   dataIndex: 'email',
-   sorter: (a, b) => {if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-                     if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+   sorter: (a, b) => {if(a.email.toLowerCase() < b.email.toLowerCase()) return -1;
+                     if(a.email.toLowerCase() >= b.email.toLowerCase()) return 1;
+    }
+}, {
+  title: 'Admin Level',
+  dataIndex: 'admin',
+   sorter: (a, b) => {if(a.admin < b.admin) return -1;
+                     if(a.admin >= b.admin) return 1;
     }
 }, {
   title: 'Action',
@@ -36,8 +39,6 @@ const columns = [{
   ),
 }];
 
-const Search = Input.Search;
-
 class UserPage extends Component {
   constructor(){
       super()
@@ -50,7 +51,10 @@ class UserPage extends Component {
         userAuths: {},
         //List of auths obtained
         obtainedAuths: [],
-        sortedInfo: null,
+        // Autocomplete data
+        autocomplete: [],
+        // Filtered autocomplete data
+        filteredAutoComplete: []
       }
 
       this.expandRow = this.expandRow.bind(this);
@@ -74,14 +78,25 @@ class UserPage extends Component {
             admin: u.admin_level
           };
         });
+
+        //Update the autocomplete data
+        var newAutocomplete = [];
+        newUsers.forEach(function(user) {
+          newAutocomplete.push(user.name);
+          newAutocomplete.push(user.email);
+        });
       
         // create a new "State" object without mutating 
         // the original State object. 
         const newState = Object.assign({}, this.state, {
           users: newUsers,
           userAuths: newUserAuths,
-          filteredUsers: newUsers
+          filteredUsers: newUsers,
+          autocomplete: Array.from(new Set(newAutocomplete)),
+          filteredAutoComplete: Array.from(new Set(newAutocomplete))
         });
+
+
 
         // store the new state object in the component's state
         this.setState(newState);
@@ -138,13 +153,21 @@ class UserPage extends Component {
 
   filterUsers(value){
     console.log(value)
+      // keep only users with name or email that contains search query
       var fUsers = this.state.users.filter((user) => {
         let userName = user.name.toLowerCase()
         let userEmail = user.email.toLowerCase()
         return userName.includes(value.toLowerCase()) || userEmail.includes(value.toLowerCase())
       });
+
+      // keep only autocomplete options that contain search query
+      var fAuto = this.state.autocomplete.filter((search) => {
+        return search.toLowerCase().includes(value.toLowerCase())
+      });
+
       const newState = Object.assign({}, this.state, {
-            filteredUsers: fUsers
+            filteredUsers: fUsers,
+            filteredAutoComplete: fAuto
       });
       this.setState(newState);
     }
@@ -157,11 +180,11 @@ class UserPage extends Component {
           <NewUserButton />
         </span>
         <div style={{float: "right"}}>
-          <Search
-          placeholder="Search users"
-          onSearch={this.filterUsers}
-          style={{ width: 200 }}
-          //enterButton
+          <AutoComplete
+            dataSource={this.state.filteredAutoComplete}
+            placeholder="Search users"
+            onSearch={this.filterUsers}
+            style={{ width: 200 }}
           />
         </div>
         <Table 

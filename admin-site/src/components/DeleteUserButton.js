@@ -1,5 +1,5 @@
 import {
-  Popconfirm, message, Button, Icon
+  Popconfirm, Button
 } from 'antd';
 import React, { Component } from "react";
 import axios from "axios";

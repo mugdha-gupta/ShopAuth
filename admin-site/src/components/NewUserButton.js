@@ -1,5 +1,5 @@
 import {
-  Button, Modal, Form, Input, TimePicker, Radio, Tooltip, Icon, 
+  Button, Modal, Form, Input, Radio, Tooltip, Icon, 
 } from 'antd';
 import React, { Component } from "react";
 import axios from "axios";
@@ -81,9 +81,9 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
         >
           {getFieldDecorator('adminlevel', {initialValue: 1},{rules: [{required: true, message: 'Please choose an admin level'}]})(
             <RadioGroup name="radiogroup">
+              <Radio value={0}>Level 0</Radio>
               <Radio value={1}>Level 1</Radio>
               <Radio value={2}>Level 2</Radio>
-              <Radio value={3}>Level 3</Radio>
             </RadioGroup>
           )}
         </Form.Item>
