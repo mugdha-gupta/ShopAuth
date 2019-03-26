@@ -19,14 +19,12 @@ public class Log {
     @ApiModelProperty(notes = "The time the user finished using the machine", dataType = "java.lang.String", example = "YYYY-MM-DD HH:MI:SS")
     private Timestamp endtime;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name="user", nullable=false)
     @ApiModelProperty(notes = "The id of the user who used the machine machine")
     private User user;
 
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name="machine", nullable=false)
     @ApiModelProperty(notes = "The id of the machine used")

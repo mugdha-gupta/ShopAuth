@@ -79,7 +79,7 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
         <Form.Item
           label="Admin Level"
         >
-          {getFieldDecorator('adminlevel', {initialValue: 1},{rules: [{required: true, message: 'Please choose an admin level'}]})(
+          {getFieldDecorator('adminlevel', {initialValue: 0},{rules: [{required: true, message: 'Please choose an admin level'}]})(
             <RadioGroup name="radiogroup">
               <Radio value={0}>Level 0</Radio>
               <Radio value={1}>Level 1</Radio>
