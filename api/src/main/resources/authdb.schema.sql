@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS authdb.machine (
   id BIGINT NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (id),
   type BIGINT,
-  FOREIGN KEY (type) REFERENCES authdb.machine_type (id) ON DELETE RESTRICT,
+  FOREIGN KEY (type) REFERENCES authdb.machine_type (id) ON DELETE CASCADE,
   displayname VARCHAR(255) NOT NULL
 );
 
@@ -30,18 +30,18 @@ CREATE TABLE IF NOT EXISTS authdb.auth (
   id BIGINT NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (id),
   user BIGINT NOT NULL,
-  FOREIGN KEY (user) REFERENCES authdb.user (id) ON DELETE RESTRICT,
+  FOREIGN KEY (user) REFERENCES authdb.user (id) ON DELETE CASCADE,
   type BIGINT NOT NULL,
-  FOREIGN KEY (type) REFERENCES authdb.machine_type (id) ON DELETE RESTRICT
+  FOREIGN KEY (type) REFERENCES authdb.machine_type (id) ON DELETE CASCADE
 );
 
 
 CREATE TABLE IF NOT EXISTS authdb.log (
   starttime TIMESTAMP NOT NULL,
   endtime TIMESTAMP NULL,
-  machine BIGINT NOT NULL,
-  FOREIGN KEY (machine) REFERENCES authdb.machine (id) ON DELETE RESTRICT,
-  user BIGINT NOT NULL,
-  FOREIGN KEY (user) REFERENCES authdb.user (id) ON DELETE RESTRICT,
+  machine BIGINT,
+  FOREIGN KEY (machine) REFERENCES authdb.machine (id) ON DELETE SET NULL,
+  user BIGINT,
+  FOREIGN KEY (user) REFERENCES authdb.user (id) ON DELETE SET NULL,
   witness VARCHAR(255) NOT NULL
 );

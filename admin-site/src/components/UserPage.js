@@ -1,58 +1,65 @@
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import React, { Component } from "react";
 import axios from "axios";
-import BootstrapTable from 'react-bootstrap-table-next';
-import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
-import "./InnerTable.css";
+import {Table, List, Divider, AutoComplete} from 'antd';
+import NewUserButton from './NewUserButton'
+import EditUserButton from './EditUserButton'
+import DeleteUserButton from './DeleteUserButton'
 
-const { SearchBar } = Search;
-
-const rowStyle = { textAlign: "center" };
-
-// The definition for the colomns in the users table
-// datafield is the name of the variable from the object to use to fill the column
-// text is the name of the column to be displayed
-// sort is whether or not the table can be sorted by this column (sorting occurs when the title of the column is clicked)
-const columns = [{
-    dataField: 'id',
-    text: 'User ID',
-    sort: true
-  }, {
-    dataField: 'name',
-    text: 'User Name',
-    sort: true
-  }, {
-    dataField: 'email',
-    text: 'User Email',
-    sort: true
-  }];
-
-// The definition for the colomns in the inner auth tables 
-const authColumns = [{
-  dataField: 'userId',
-  text: 'User ID',
-  sort: true
+const columns = [
+{
+  title: 'Name',
+  dataIndex: 'name',
+  sorter: (a, b) => {if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                     if(a.name.toLowerCase() >= b.name.toLowerCase()) return 1;},
 }, {
-  dataField: 'typeName',
-  text: 'Machine Type Name',
-  sort: true
+  title: 'Email',
+  dataIndex: 'email',
+   sorter: (a, b) => {if(a.email.toLowerCase() < b.email.toLowerCase()) return -1;
+                     if(a.email.toLowerCase() >= b.email.toLowerCase()) return 1;
+    }
 }, {
-  dataField: 'typeId',
-  text: 'Machine Type Id',
-  sort: true
+  title: 'Admin Level',
+  dataIndex: 'admin',
+   sorter: (a, b) => {if(a.admin < b.admin) return -1;
+                     if(a.admin >= b.admin) return 1;
+    }
+}, {
+  title: 'Action',
+  key: 'action',
+  render: (text, record) => (
+    <span>
+      <EditUserButton 
+        user = {record}
+      />
+      <Divider type="vertical" />
+      <DeleteUserButton 
+        id = {record.id}
+      />
+    </span>
+  ),
 }];
 
-class UsersPage extends Component {
+class UserPage extends Component {
   constructor(){
       super()
       this.state = {
         // List of all users in the system
         users: [],
+        // List of users after filter
+        filteredUsers: [],
         // Dictionary that maps a user to all the auths associated to the user
-        userAuths: {}
+        userAuths: {},
+        //List of auths obtained
+        obtainedAuths: [],
+        // Autocomplete data
+        autocomplete: [],
+        // Filtered autocomplete data
+        filteredAutoComplete: []
       }
+
+      this.expandRow = this.expandRow.bind(this);
+      this.filterUsers = this.filterUsers.bind(this);
   }
-  
 
   componentDidMount() {
     axios
@@ -66,16 +73,30 @@ class UsersPage extends Component {
           return {
             id: u.id,
             name: u.name,
-            email: u.email
+            email: u.email,
+            cardid: u.scanString,
+            admin: u.admin_level
           };
         });
 
+        //Update the autocomplete data
+        var newAutocomplete = [];
+        newUsers.forEach(function(user) {
+          newAutocomplete.push(user.name);
+          newAutocomplete.push(user.email);
+        });
+      
         // create a new "State" object without mutating 
         // the original State object. 
         const newState = Object.assign({}, this.state, {
           users: newUsers,
-          userAuths: newUserAuths
+          userAuths: newUserAuths,
+          filteredUsers: newUsers,
+          autocomplete: Array.from(new Set(newAutocomplete)),
+          filteredAutoComplete: Array.from(new Set(newAutocomplete))
         });
+
+
 
         // store the new state object in the component's state
         this.setState(newState);
@@ -83,13 +104,13 @@ class UsersPage extends Component {
       .catch(error => console.log(error));
   }
 
-  handleOnExpand = (row, isExpand, rowIndex, e) => {
+  expandRow = (record)  => {
+
     //Call api to get auths for expanded user if the row is expanded and it has not already been retrieved
-    if(isExpand && this.state.userAuths[row.id].length === 0){
-      console.log("here");
+    if(!this.state.obtainedAuths.includes(record.name)){
       axios
         .post("http://localhost:8080/auth/findByUser", {
-          id: row.id
+          id: record.id
         })
         .then(response => {
 
@@ -103,96 +124,78 @@ class UsersPage extends Component {
           });
 
           var newUserAuths = this.state.userAuths;
-          newUserAuths[row.id] = newAuths;
+          newUserAuths[record.id] = newAuths;
+
+          // Add user to list of users where auths were obtained to avoid repeat retrievals
+          var newObtainedAuths = this.state.obtainedAuths;
+          newObtainedAuths.push(record.name);
 
           // create a new "State" object without mutating 
           // the original State object. 
           const newState = Object.assign({}, this.state, {
-            userAuths: newUserAuths
+            userAuths: newUserAuths,
+            obtainedAuths: newObtainedAuths
           });
 
           // store the new state object in the component's state
           this.setState(newState);
         })
         .catch(error => console.log(error));
-      }
+    }
+    return (
+      <List
+        header={<div style={{fontWeight: "bold"}}> Authorized Machines</div>}
+        dataSource={this.state.userAuths[record.id]}
+        renderItem={item => (<List.Item>- {item.typeName}</List.Item>)}
+      />
+    );
   }
 
+  filterUsers(value){
+    console.log(value)
+      // keep only users with name or email that contains search query
+      var fUsers = this.state.users.filter((user) => {
+        let userName = user.name.toLowerCase()
+        let userEmail = user.email.toLowerCase()
+        return userName.includes(value.toLowerCase()) || userEmail.includes(value.toLowerCase())
+      });
+
+      // keep only autocomplete options that contain search query
+      var fAuto = this.state.autocomplete.filter((search) => {
+        return search.toLowerCase().includes(value.toLowerCase())
+      });
+
+      const newState = Object.assign({}, this.state, {
+            filteredUsers: fUsers,
+            filteredAutoComplete: fAuto
+      });
+      this.setState(newState);
+    }
+
   render() {
-    //Properties to use when a row is expanded in user table
-    const expandRow = {
-      //What html to use to render inner auth tables
-      renderer: row => (
-        // add margin here to indent from outer table
-        <div style={{paddingLeft: 50}}>
-          <ToolkitProvider
-            keyField='typeId' 
-            data={this.state.userAuths[row.id]} 
-            columns={authColumns}
-            wrapperClasses="innerTable"
-            search
-          >
-            {
-              props => (
-                <div>
-                  <div style={{float: "right", marginTop: 10, marginRight: 10}}>
-                    <SearchBar { ...props.searchProps } 
-                      placeholder="Search Authorizations"
-                    />
-                  </div>
-                  <BootstrapTable
-                    wrapperClasses="innerTable"
-                    { ...props.baseProps }
-                    bordered={ false }
-                    noDataIndication="User is not trained for any machine"
-                  />
-                </div>
-              )
-            }
-          </ToolkitProvider>
-        </div>
-      ),
-
-      //What function to call when a row is expanded
-      onExpand: this.handleOnExpand
-    };
-
-    // How to render outer user table
-    // ToolkitProvider generates all the table stuff
-    // data is list of objects to use to fill table
-    // columns is the format of the columns defined earlier
-    // search tells it there is a SearchBar object that should be used to filter
-    // props is how the table stuff should be organized
     return (
       <div>
-        <ToolkitProvider 
-          keyField='id' 
-          data={this.state.users} 
-          columns={columns}
-          search>
-            {
-              props => (
-                <div style={rowStyle}>
-                  <div style={{float: "right"}}>
-                    <SearchBar 
-                      { ...props.searchProps } 
-                      placeholder="Search Users"
-                    />
-                  </div>
-                  <BootstrapTable
-                    { ...props.baseProps }
-                    expandRow={ expandRow } 
-                    bordered={ false }
-                    noDataIndication="There are no users"
-                  />
-                </div>
-              )
-            }
-          </ToolkitProvider>
+        <span id="heading">
+          <h3>Authorized Users </h3>
+          <NewUserButton />
+        </span>
+        <div style={{float: "right"}}>
+          <AutoComplete
+            dataSource={this.state.filteredAutoComplete}
+            placeholder="Search users"
+            onSearch={this.filterUsers}
+            style={{ width: 200 }}
+          />
+        </div>
+        <Table 
+          rowKey="id" 
+          dataSource={this.state.filteredUsers} 
+          columns={columns} 
+          expandedRowRender={this.expandRow}
+        />
       </div>
     );
   }
 }
-
-   
-export default UsersPage;
+ 
+export default UserPage;

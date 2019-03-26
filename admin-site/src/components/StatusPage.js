@@ -29,7 +29,7 @@ const columns = [{
 // Min time between refreshes to limit api calls in miliseconds
 const timeBetweenRefresh = 30 * 1000;
 
-class Status extends Component {
+class StatusPage extends Component {
   constructor(){
       super()
       this.state = {
@@ -98,7 +98,6 @@ class Status extends Component {
                   <BootstrapTable
                     { ...props.baseProps }
                     bordered={ false }
-                    noDataIndication="No machines are in use"
                   />
                 </div>
               )
@@ -144,4 +143,4 @@ class Status extends Component {
 }
 
    
-export default Status;
+export default StatusPage;
