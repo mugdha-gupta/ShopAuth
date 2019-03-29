@@ -4,6 +4,7 @@ import {Table, List, Divider, AutoComplete} from 'antd';
 import NewUserButton from './NewUserButton'
 import EditUserButton from './EditUserButton'
 import DeleteUserButton from './DeleteUserButton'
+import AddAuthButton from './AddAuthButton'
 
 const columns = [
 {
@@ -35,6 +36,10 @@ const columns = [
       <DeleteUserButton 
         id = {record.id}
       />
+      <Divider type="vertical" />
+      <AddAuthButton
+        user = {record}
+      />
     </span>
   ),
 }];
@@ -54,7 +59,7 @@ class UserPage extends Component {
         // Autocomplete data
         autocomplete: [],
         // Filtered autocomplete data
-        filteredAutoComplete: []
+        filteredAutoComplete: [],
       }
 
       this.expandRow = this.expandRow.bind(this);
