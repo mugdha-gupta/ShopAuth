@@ -11,7 +11,7 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
     
     render() {
       const {
-        visible, onCancel, onCreate, form, user, machineTypes, targetKeys, filterOption, handleChange, handleSearch
+        visible, onCancel, onCreate, form, user, machineTypes, targetKeys, filterOption, handleChange
       } = this.props;
 
       var title = "Edit Authorizations of " + user.name
@@ -34,7 +34,6 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
                 filterOption={filterOption}
                 targetKeys={targetKeys}
                 onChange={handleChange}
-                onSearch={handleSearch}
                 render={item => item.title}
             />
         </Form.Item>
@@ -152,12 +151,10 @@ class AddAuthButton extends Component {
         })
         .catch(error => console.log(error));
   }
-  filterOption = (inputValue, option) => option.typeName.indexOf(inputValue) > -1
+  filterOption = (inputValue, option) => option.title.toLowerCase().includes(inputValue.toLowerCase())
 
   handleChange = (targetKeys) => {
-      console.log(this.state.targetKeys);
       this.setState({ targetKeys });
-      console.log(this.state.targetKeys);
     }
 
   render() {
