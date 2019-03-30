@@ -98,6 +98,7 @@ class StatusPage extends Component {
             dataSource={this.state.filteredAutoComplete}
             placeholder="Search logins"
             onSearch={this.filterLogins}
+            onSelect={this.filterLogins}
             style={{ width: 200 }}
           />
         </div>
