@@ -4,7 +4,7 @@ import {
   NavLink,
   HashRouter
 } from "react-router-dom";
-import StatusPage from "./components/StatusPage"
+import StatusPage from "./components/StatusPage";
 import UserPage from "./components/UserPage";
 import MachinePage from "./components/MachinePage";
 import "antd/dist/antd.css";
@@ -18,7 +18,7 @@ class Main extends Component {
         <div>
           <h1>Machine Shop Authorization</h1>
           <ul className="header">
-            <li><NavLink exact to="/">StatusPage</NavLink></li>
+            <li><NavLink exact to="/">Status</NavLink></li>
             <li><NavLink to="/users">Users</NavLink></li>
             <li><NavLink to="/machines">Machines</NavLink></li>
           </ul>
