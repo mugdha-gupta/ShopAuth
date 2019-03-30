@@ -189,7 +189,7 @@ class UserPage extends Component {
             dataSource={this.state.filteredAutoComplete}
             placeholder="Search users"
             onSearch={this.filterUsers}
-            onSelect={this.filterLogins}
+            onSelect={this.filterUsers}
             style={{ width: 200 }}
           />
         </div>
