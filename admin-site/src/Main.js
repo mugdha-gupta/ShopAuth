@@ -5,8 +5,8 @@ import {
   HashRouter
 } from "react-router-dom";
 import StatusPage from "./components/StatusPage";
-import UserPage from "./components/user-page/UserPage";
-import MachinePage from "./components/machine-page/MachinePage";
+import UserPage from "./components/UserPage";
+import MachinePage from "./components/MachinePage";
 import "antd/dist/antd.css";
 
  
