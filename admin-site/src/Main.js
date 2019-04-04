@@ -4,9 +4,9 @@ import {
   NavLink,
   HashRouter
 } from "react-router-dom";
-import StatusPage from "./components/StatusPage";
-import UserPage from "./components/UserPage";
-import MachinePage from "./components/MachinePage";
+import StatusPage from "./components/status-page/StatusPage";
+import UserPage from "./components/user-page/UserPage";
+import MachinePage from "./components/machine-page/MachinePage";
 import "antd/dist/antd.css";
 
  
