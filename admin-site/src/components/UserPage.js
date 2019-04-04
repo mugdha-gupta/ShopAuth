@@ -64,6 +64,7 @@ class UserPage extends Component {
 
       this.expandRow = this.expandRow.bind(this);
       this.filterUsers = this.filterUsers.bind(this);
+      this.addUser = this.addUser.bind(this);
   }
 
   componentDidMount() {
@@ -176,13 +177,19 @@ class UserPage extends Component {
       });
       this.setState(newState);
     }
+  
+  addUser = (user) => {
+    var oldUsers = this.state.users;
+    oldUsers.push(user);
+    this.setState({ users: oldUsers });
+  }
 
   render() {
     return (
       <div>
         <span id="heading">
           <h3>Authorized Users </h3>
-          <NewUserButton />
+          <NewUserButton addUser={this.addUser}/>
         </span>
         <div style={{float: "right"}}>
           <AutoComplete
