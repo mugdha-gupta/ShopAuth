@@ -123,7 +123,6 @@ class NewUserButton extends Component {
         axios
         .post("http://localhost:8080/user", {name:name, email:email, admin_level:adminlevel, scanString:cardid})
         .then(u => {
-          console.log(u);
           const user = {
             id: u.data.id,
             name: u.data.name,

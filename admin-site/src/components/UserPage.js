@@ -35,6 +35,7 @@ const columns = [
       <Divider type="vertical" />
       <DeleteUserButton 
         id = {record.id}
+        delUser = {record.delUser}
       />
       <Divider type="vertical" />
       <AddAuthButton
@@ -65,6 +66,7 @@ class UserPage extends Component {
       this.expandRow = this.expandRow.bind(this);
       this.filterUsers = this.filterUsers.bind(this);
       this.addUser = this.addUser.bind(this);
+      this.delUser = this.delUser.bind(this);
   }
 
   componentDidMount() {
@@ -81,7 +83,8 @@ class UserPage extends Component {
             name: u.name,
             email: u.email,
             cardid: u.scanString,
-            admin: u.admin_level
+            admin: u.admin_level,
+            delUser: this.delUser
           };
         });
 
@@ -178,9 +181,42 @@ class UserPage extends Component {
       this.setState(newState);
     }
   
-  addUser = (user) => {
+  addUser = (u) => {
+    const newUser = this.makeUser(u);
     var oldUsers = this.state.users;
-    oldUsers.push(user);
+    oldUsers.push(newUser);
+    this.setState({ users: oldUsers });
+  }
+
+  makeUser = (u) => {
+    const newUser = {
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      cardid: u.cardid,
+      admin: u.admin,
+      delUser: this.delUser
+    }
+    return newUser;
+  }
+
+  delUser = (id, user) => {
+    console.log(id);
+    var oldUsers = this.state.users;
+    for(var i = 0; i < oldUsers.length; i++) {
+        if(oldUsers[i].id === id) {
+          if(user){
+            const newUser = this.makeUser(user);
+            oldUsers.splice(i, 1, newUser);
+          }
+          else{
+            console.log(oldUsers[i]);
+            oldUsers.splice(i, 1);
+          }
+          break;
+        }
+    }
+    console.log(oldUsers);
     this.setState({ users: oldUsers });
   }
 
