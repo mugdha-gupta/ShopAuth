@@ -18,9 +18,8 @@ function onChange(checked) {
 class AdminModeSwitch extends Component {
   render() {
     return (
-      <div>
-        <Switch defaultChecked onChange={onChange} />
-      </div>
+      <Switch defaultChecked onChange={onChange} checkedChildren="IN" unCheckedChildren="OUT" />
+
       
     );
   }

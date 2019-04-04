@@ -18,6 +18,7 @@ class Main extends Component {
       <HashRouter>
         <div>
           <div style={{float: "right"}}>
+          	<h3 style={{display: "inline", color: 'white'}}> Admin Present:    </h3>
           	<AdminModeSwitch />
           </div>
           <h1>Machine Shop Authorization</h1>
