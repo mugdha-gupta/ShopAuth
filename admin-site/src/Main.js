@@ -7,6 +7,7 @@ import {
 import StatusPage from "./components/status-page/StatusPage";
 import UserPage from "./components/user-page/UserPage";
 import MachinePage from "./components/machine-page/MachinePage";
+import AdminModeSwitch from "./components/AdminModeSwitch";
 import "antd/dist/antd.css";
 
  
@@ -16,7 +17,11 @@ class Main extends Component {
     return (
       <HashRouter>
         <div>
+          <div style={{float: "right"}}>
+          	<AdminModeSwitch />
+          </div>
           <h1>Machine Shop Authorization</h1>
+          
           <ul className="header">
             <li><NavLink exact to="/">Status</NavLink></li>
             <li><NavLink to="/users">Users</NavLink></li>

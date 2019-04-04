@@ -95,15 +95,15 @@ public class LoginController {
 
     @ApiOperation(value = "Set whether or not an admin is currently present")
     @PostMapping("/setadmin")
-    public boolean setadmin(@RequestBody Boolean admin){
-        adminPresent = admin;
-        return true;
+    public AdminBody setadmin(@RequestBody AdminBody admin){
+        adminPresent = admin.getAdminPresent();
+        return admin;
     }
 
     @ApiOperation(value = "Get whether or not an admin is currently present")
     @PostMapping("/getadmin")
-    public boolean getadmin(){
-        return adminPresent;
+    public AdminBody getadmin(){
+        return new AdminBody(adminPresent);
     }
 
 }

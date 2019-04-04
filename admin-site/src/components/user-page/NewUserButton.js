@@ -123,13 +123,12 @@ class NewUserButton extends Component {
         axios
         .post("http://localhost:8080/user", {name:name, email:email, admin_level:adminlevel, scanString:cardid})
         .then(response => {
-          alert('success');
+          console.log('success');
           
         })
         .catch((error) => {
           // Error
           console.log(error);
-          alert('error could not post');
 
       });
       form.resetFields();
