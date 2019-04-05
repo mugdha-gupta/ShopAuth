@@ -45,7 +45,7 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
   }
 );
 
-class AddAuthButton extends Component {
+class EditAuthButton extends Component {
   state = {
     visible: false,
     currAuths: [],
@@ -63,13 +63,15 @@ class AddAuthButton extends Component {
   }
 
   handleCreate = () => {
-  console.log("Target Keys: ")
-  console.log(this.state.targetKeys)
+    console.log("Target Keys: ")
+    console.log(this.state.targetKeys)
+    var targetMachineTypes = [];
+    const userId = this.props.user.id;
     this.state.targetKeys.map(t => {
         if(this.state.currAuths.filter(auth => auth === t).length === 0){
-        console.log("Target Key to add: " + t)
+          console.log("Target Key to add: " + t)
             axios
-             .post("http://localhost:8080/auth", {typeId:t, userId:this.props.user.id})
+             .post("http://localhost:8080/auth", {typeId:t, userId:userId})
              .then(response => {
                console.log('successfully added ' + t);
              })
@@ -79,14 +81,22 @@ class AddAuthButton extends Component {
                 alert('error could not add ' + t);
              });
         }
+        this.state.machineTypes.filter(type => type.key === t).forEach(function(aprovedType) {
+          var newType = {
+            userId: userId,
+            typeName: aprovedType.title,
+            typeId: aprovedType.key
+          };
+          targetMachineTypes.push(newType);
+        })
     })
     console.log("Curr Auths: ")
     console.log( this.state.currAuths)
     this.state.currAuths.map(auth => {
       if(this.state.targetKeys.filter(key => key === auth).length === 0){
-          console.log("{typeId:" + auth.typeId + ", userId:" + this.props.user.id + "}")
+          console.log("{typeId:" + auth.typeId + ", userId:" + userId + "}")
           axios
-            .delete("http://localhost:8080/auth", {data: {typeId:auth, userId:this.props.user.id}})
+            .delete("http://localhost:8080/auth", {data: {typeId:auth, userId:userId}})
             .then(response => {
                console.log('successfully removed ' + auth);
             })
@@ -98,6 +108,8 @@ class AddAuthButton extends Component {
        }
     });
     this.setState({ visible: false, currAuths: this.state.targetKeys });
+    this.props.user.updateAuths(userId, targetMachineTypes);
+    console.log(targetMachineTypes);
   }
 
   saveFormRef = (formRef) => {
@@ -177,4 +189,4 @@ class AddAuthButton extends Component {
   }
 }
 
-export default AddAuthButton;
+export default EditAuthButton;
