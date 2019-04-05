@@ -79,7 +79,15 @@ class UserPage extends Component {
         var newUserAuths = {};
         const newUsers = response.data.map(u => {
           newUserAuths[u.id] = [];
-          return this.makeUser(u);
+          return {
+            id: u.id,
+            name: u.name,
+            email: u.email,
+            cardid: u.scanString,
+            admin: u.admin_level,
+            delUser: this.delUser,
+            updateAuths: this.updateAuths
+          };
         });
 
         //Update the autocomplete data
