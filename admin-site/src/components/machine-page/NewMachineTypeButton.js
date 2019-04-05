@@ -71,8 +71,14 @@ class NewMachineTypeButton extends Component {
 
       axios
         .post("http://localhost:8080/machinetype", {displayname:name, time1:time})
-        .then(response => {
+        .then(u => {
           alert('success');
+          const type = {
+            id: u.data.id,
+            typeName: u.data.displayname,
+            time: u.data.time1,
+          };
+          this.props.addType(type);
           
         })
         .catch((error) => {
