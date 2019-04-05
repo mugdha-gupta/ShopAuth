@@ -4,7 +4,7 @@ import {Table, List, Divider, AutoComplete} from 'antd';
 import NewUserButton from './NewUserButton'
 import EditUserButton from './EditUserButton'
 import DeleteUserButton from './DeleteUserButton'
-import AddAuthButton from './AddAuthButton'
+import EditAuthButton from './EditAuthButton'
 
 const columns = [
 {
@@ -38,7 +38,7 @@ const columns = [
         delUser = {record.delUser}
       />
       <Divider type="vertical" />
-      <AddAuthButton
+      <EditAuthButton
         user = {record}
       />
     </span>
@@ -67,6 +67,7 @@ class UserPage extends Component {
       this.filterUsers = this.filterUsers.bind(this);
       this.addUser = this.addUser.bind(this);
       this.delUser = this.delUser.bind(this);
+      this.updateAuths = this.updateAuths.bind(this);
   }
 
   componentDidMount() {
@@ -78,14 +79,7 @@ class UserPage extends Component {
         var newUserAuths = {};
         const newUsers = response.data.map(u => {
           newUserAuths[u.id] = [];
-          return {
-            id: u.id,
-            name: u.name,
-            email: u.email,
-            cardid: u.scanString,
-            admin: u.admin_level,
-            delUser: this.delUser
-          };
+          return this.makeUser(u);
         });
 
         //Update the autocomplete data
@@ -116,7 +110,7 @@ class UserPage extends Component {
   expandRow = (record)  => {
 
     //Call api to get auths for expanded user if the row is expanded and it has not already been retrieved
-    if(!this.state.obtainedAuths.includes(record.name)){
+    if(!this.state.obtainedAuths.includes(record.id)){
       axios
         .post("http://localhost:8080/auth/findByUser", {
           id: record.id
@@ -132,22 +126,7 @@ class UserPage extends Component {
             };
           });
 
-          var newUserAuths = this.state.userAuths;
-          newUserAuths[record.id] = newAuths;
-
-          // Add user to list of users where auths were obtained to avoid repeat retrievals
-          var newObtainedAuths = this.state.obtainedAuths;
-          newObtainedAuths.push(record.name);
-
-          // create a new "State" object without mutating 
-          // the original State object. 
-          const newState = Object.assign({}, this.state, {
-            userAuths: newUserAuths,
-            obtainedAuths: newObtainedAuths
-          });
-
-          // store the new state object in the component's state
-          this.setState(newState);
+          this.updateAuths(record.id, newAuths);
         })
         .catch(error => console.log(error));
     }
@@ -195,7 +174,8 @@ class UserPage extends Component {
       email: u.email,
       cardid: u.cardid,
       admin: u.admin,
-      delUser: this.delUser
+      delUser: this.delUser,
+      updateAuths: this.updateAuths
     }
     return newUser;
   }
@@ -218,6 +198,25 @@ class UserPage extends Component {
     }
     console.log(oldUsers);
     this.setState({ users: oldUsers });
+  }
+
+  updateAuths = (id, auths) => {
+    var newUserAuths = this.state.userAuths;
+    newUserAuths[id] = auths;
+
+    // Add user to list of users where auths were obtained to avoid repeat retrievals
+    var newObtainedAuths = this.state.obtainedAuths;
+    newObtainedAuths.push(id);
+
+    // create a new "State" object without mutating 
+    // the original State object. 
+    const newState = Object.assign({}, this.state, {
+      userAuths: newUserAuths,
+      obtainedAuths: newObtainedAuths
+    });
+
+    // store the new state object in the component's state
+    this.setState(newState);
   }
 
   render() {
