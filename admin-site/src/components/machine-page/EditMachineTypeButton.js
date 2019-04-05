@@ -1,9 +1,8 @@
-import {Button, Modal, Form, Input, TimePicker, Radio, Tooltip, Icon, } from 'antd';
+import {Button, Modal, Form, Input, TimePicker, } from 'antd';
 import React, { Component } from "react";
 import axios from "axios";
 import moment from 'moment';
 
-const RadioGroup = Radio.Group;
 
 const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
   // eslint-disable-next-line

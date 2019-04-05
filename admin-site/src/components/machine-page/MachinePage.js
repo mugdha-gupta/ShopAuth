@@ -100,51 +100,48 @@ class MachinePage extends Component {
   }
 
   expandRow = (record)  => {
+    if(!this.state.obtainedMachines.includes(record.typeName)){
+      axios
+        .post("http://localhost:8080/machine/filter", {typeId: record.id})
+        .then(response => {
+          // create an array of users only with relevant data
+          const newTypeMachines = response.data.map(m => {
+            return {
+              machineId: m.id,
+              machineName: m.displayname,
+            };
+          });
+          
+          var newMachines = this.state.machines;
+          newMachines[record.id] = newTypeMachines;
 
-    // //Call api to get auths for expanded user if the row is expanded and it has not already been retrieved
-    // if(!this.state.obtainedMachines.includes(record.typeName)){
-    //   axios
-    //     .post("http://localhost:8080/machine/filter", {id: record.id})
-    //     .then(response => {
-    //       // create an array of users only with relevant data
-    //       const newTypeMachines = response.data.map(m => {
-    //         return {
-    //           machineId: m.id,
-    //           machineName: m.displayname,
-    //         };
-    //       });
+          // Add user to list of users where auths were obtained to avoid repeat retrievals
+          var newObtainedMachines = this.state.obtainedMachines;
+          newObtainedMachines.push(record.typeName);
 
-    //       var newMachines = this.state.machines;
-    //       newMachines[record.id] = newTypeMachines;
+          // create a new "State" object without mutating 
+          // the original State object. 
+          const newState = Object.assign({}, this.state, {
+            machines: newMachines,
+            obtainedMachines: newObtainedMachines
+          });
 
-    //       // Add user to list of users where auths were obtained to avoid repeat retrievals
-    //       var newObtainedMachines = this.state.obtainedMachines;
-    //       newObtainedMachines.push(record.typeName);
-
-    //       // create a new "State" object without mutating 
-    //       // the original State object. 
-    //       const newState = Object.assign({}, this.state, {
-    //         machines: newMachines,
-    //         obtainedMachines: newObtainedMachines
-    //       });
-
-    //       // store the new state object in the component's state
-    //       this.setState(newState);
-    //     })
-    //     .catch(error => console.log(error));
-    // }
-    // return (
-    //   <List
-    //     header={<div style={{fontWeight: "bold"}}>Machines</div>}
-    //     dataSource={this.state.Machines[record.id]}
-    //     renderItem={item => (<List.Item>- {item.machineName}</List.Item>)}
-    //   />
-    // );
+          // store the new state object in the component's state
+          this.setState(newState);
+        })
+        .catch(error => console.log(error));
+    }
+    return(
+      <List
+        header={<div style={{fontWeight: "bold"}}>Machines</div>}
+        dataSource={this.state.machines[record.id]}
+        renderItem={item => (<List.Item>- {item.machineName}</List.Item>)}
+      />
+    );
 
   }
 
   filterTypes(value){
-    console.log(value)
       // keep only users with name or email that contains search query
       var fTypes = this.state.types.filter((machinetype) => {
         let typeName = machinetype.typeName.toLowerCase()
@@ -181,7 +178,6 @@ class MachinePage extends Component {
   }
 
   delType = (id, type) => {
-    console.log(id);
     var oldTypes = this.state.types;
     for(var i = 0; i < oldTypes.length; i++) {
         if(oldTypes[i].id === id) {
@@ -196,8 +192,6 @@ class MachinePage extends Component {
           break;
         }
     }
-    console.log('oldTypes');
-    console.log(oldTypes);
     this.setState({ types: oldTypes });
   }
 
@@ -221,7 +215,7 @@ class MachinePage extends Component {
           rowKey="id" 
           dataSource={this.state.filteredTypes} 
           columns={columns} 
-          expandedRowRender={record => <p style={{ margin: 0 }}>machines</p>}
+          expandedRowRender={this.expandRow}
         />
       </div>
     );
