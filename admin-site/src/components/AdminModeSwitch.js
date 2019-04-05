@@ -2,25 +2,64 @@ import React, { Component } from "react";
 import { Switch } from 'antd';
 import axios from "axios";
 
-function onChange(checked) {
+
+ 
+class AdminModeSwitch extends Component {
+   constructor(){
+      super()
+        this.state = {
+          adminpresent: false,
+        }
+
+        this.onChange = this.onChange.bind(this);
+    }
+
+
+  componentDidMount() {
+    axios
+    .post("http://localhost:8080/login/getadmin")
+    .then(response => {
+      console.log(response)
+      const newadminpresent = response.data.adminPresent
+      console.log(newadminpresent)
+      const newState = Object.assign({}, this.state, {
+          adminpresent: newadminpresent
+        });
+
+      this.setState(newState);
+      
+
+    })
+    .catch((error) => {
+      // Error
+      console.log(error);
+    });
+
+  }
+
+  onChange(checked) {
   const adminpresent = checked;
   axios
     .post("http://localhost:8080/login/setadmin", {adminPresent:adminpresent})
     .then(response => {
       console.log('success');
+      const newState = Object.assign({}, this.state, {
+          adminpresent: response.data.adminPresent
+        });
+
+      this.setState(newState);
     })
     .catch((error) => {
       // Error
       console.log(error);
     });
 }
- 
-class AdminModeSwitch extends Component {
-  render() {
-    return (
-      <Switch defaultChecked onChange={onChange} checkedChildren="IN" unCheckedChildren="OUT" />
 
-      
+  render() {
+    console.log(this.state.adminpresent)
+    return (
+      <Switch checked={this.state.adminpresent} onChange={this.onChange} checkedChildren="IN" unCheckedChildren="OUT" />
+
     );
   }
 }
