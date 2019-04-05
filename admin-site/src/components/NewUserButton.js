@@ -122,9 +122,15 @@ class NewUserButton extends Component {
         console.log('Received values of form: ', name, email, cardid, adminlevel);
         axios
         .post("http://localhost:8080/user", {name:name, email:email, admin_level:adminlevel, scanString:cardid})
-        .then(response => {
-          alert('success');
-          
+        .then(u => {
+          const user = {
+            id: u.data.id,
+            name: u.data.name,
+            email: u.data.email,
+            cardid: u.data.scanString,
+            admin: u.data.admin_level
+          };
+          this.props.addUser(user);
         })
         .catch((error) => {
           // Error
