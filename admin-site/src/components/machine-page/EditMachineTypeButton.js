@@ -1,9 +1,8 @@
-import {
-  Button, Modal, Form, Input, TimePicker
-} from 'antd';
+import {Button, Modal, Form, Input, TimePicker, } from 'antd';
 import React, { Component } from "react";
 import axios from "axios";
 import moment from 'moment';
+
 
 const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
   // eslint-disable-next-line
@@ -12,24 +11,24 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
     
     render() {
       const {
-        visible, onCancel, onCreate, form,
+        visible, onCancel, onCreate, form, type
       } = this.props;
       const { getFieldDecorator } = form;
-
       function handleChange(time, timeString) {
         console.log(time, 'timeString:' + timeString);
       }
       return (
         <Modal
           visible={visible}
-          title="Create a New Machine Type"
-          okText="Create"
+          title={type.typeName}
+          okText="Save"
           onCancel={onCancel}
           onOk={onCreate}
         >
           <Form layout="vertical">
             <Form.Item label="Machine Type Name">
               {getFieldDecorator('name', {
+                initialValue: type.typeName,
                 rules: [{ required: true, message: 'Please enter a name for the machine type' }],
               })(
                 <Input />
@@ -39,7 +38,7 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
               {getFieldDecorator('maxtime', {
                 initialValue: moment('01:00:00', 'HH:mm:ss'),
                 rules: [{ required: true, message: 'Please enter a max use time for the machine type' }],
-              })(<TimePicker onChange={handleChange} />)}
+              })(<TimePicker onChange={handleChange} />)}            
             </Form.Item>
           </Form>
         </Modal>
@@ -48,7 +47,7 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
   }
 );
 
-class NewMachineTypeButton extends Component {
+class EditMachineTypeButton extends Component {
   state = {
     visible: false,
   };
@@ -63,31 +62,32 @@ class NewMachineTypeButton extends Component {
 
   handleCreate = () => {
     const form = this.formRef.props.form;
+    const id = this.formRef.props.type.id;
     form.validateFields((err, values) => {
       if (err) {
         return;
       }
 
       console.log('Received values of form: ', values);
-      const name = values.name;
+      const typeName = values.name;
       const time = values.maxtime.format('HH:mm:ss');
-
-      axios
-        .post("http://localhost:8080/machinetype", {displayname:name, time1:time})
+        console.log('Received values of form: ', typeName, time);
+        axios
+        .put("http://localhost:8080/machinetype/"+id, {displayname:typeName, time1:time})
         .then(u => {
-          alert('success');
           const type = {
             id: u.data.id,
             typeName: u.data.displayname,
             time: u.data.time1,
           };
-          this.props.addType(type);
-          
+          console.log(type);
+          this.props.type.delType(u.data.id, type);
+
         })
         .catch((error) => {
           // Error
           console.log(error);
-          alert('error could not post');
+          alert('error could not save');
 
       });
       form.resetFields();
@@ -98,20 +98,21 @@ class NewMachineTypeButton extends Component {
   saveFormRef = (formRef) => {
     this.formRef = formRef;
   }
-
+  
   render() {
     return (
       <span>
-        <Button type="primary" icon="plus" ghost onClick={this.showModal}>Add New Machine Type</Button>
+        <Button type="primary" icon="edit" ghost onClick={this.showModal}>Edit</Button>
         <CollectionCreateForm
           wrappedComponentRef={this.saveFormRef}
           visible={this.state.visible}
           onCancel={this.handleCancel}
           onCreate={this.handleCreate}
+          type={this.props.type}
         />
       </span>
     );
   }
 }
 
-export default NewMachineTypeButton;
+export default EditMachineTypeButton;
