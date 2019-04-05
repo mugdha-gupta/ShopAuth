@@ -36,7 +36,10 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
               )}
             </Form.Item>
             <Form.Item label="Max Use Time">
-              {getFieldDecorator('maxtime', {initialValue: moment('01:00:00', 'HH:mm:ss')})(<TimePicker onChange={handleChange} />)}
+              {getFieldDecorator('maxtime', {
+                initialValue: moment('01:00:00', 'HH:mm:ss'),
+                rules: [{ required: true, message: 'Please enter a max use time for the machine type' }],
+              })(<TimePicker onChange={handleChange} />)}
             </Form.Item>
           </Form>
         </Modal>
