@@ -10,8 +10,7 @@ class DeleteUserButton extends Component {
     axios
       .delete("http://localhost:8080/user/"+id)
       .then(response => {
-        alert('success');
-          
+        this.props.delUser(id);
       })
       .catch((error) => {
         // Error
