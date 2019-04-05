@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 import axios from "axios";
 import {Table, List, Divider, AutoComplete} from 'antd';
-import NewUserButton from '../user-page/NewUserButton'
-import NewMachineTypeButton from './NewMachineTypeButton'
-import EditUserButton from '../user-page/EditUserButton'
-import DeleteUserButton from '../user-page/DeleteUserButton'
-import AddAuthButton from '../user-page/AddAuthButton'
+import NewMachineTypeButton from './NewMachineTypeButton';
+import DeleteMachineTypeButton from './DeleteMachineTypeButton'
+import EditMachineTypeButton from './EditMachineTypeButton';
 
 const columns = [
 {
@@ -19,6 +17,21 @@ const columns = [
    sorter: (a, b) => {if(a.time.toLowerCase() < b.time.toLowerCase()) return -1;
                      if(a.time.toLowerCase() >= b.time.toLowerCase()) return 1;
     }
+}, {
+  title: 'Action',
+  key: 'action',
+  render: (text, record) => (
+    <span>
+      <EditMachineTypeButton 
+        type = {record}
+      />
+      <Divider type="vertical" />
+      <DeleteMachineTypeButton 
+        id = {record.id}
+        delType = {record.delType}
+      />
+    </span>
+  ),
 }];
 
 class MachinePage extends Component {
@@ -160,8 +173,8 @@ class MachinePage extends Component {
   makeType = (t) => {
     const newType = {
       id: t.id,
-      typeName: t.displayname,
-      time: t.time1,
+      typeName: t.typeName,
+      time: t.time,
       delType: this.delType
     }
     return newType;
@@ -173,7 +186,7 @@ class MachinePage extends Component {
     for(var i = 0; i < oldTypes.length; i++) {
         if(oldTypes[i].id === id) {
           if(type){
-            const newType = this.makeUser(type);
+            const newType = this.makeType(type);
             oldTypes.splice(i, 1, newType);
           }
           else{
@@ -183,6 +196,7 @@ class MachinePage extends Component {
           break;
         }
     }
+    console.log('oldTypes');
     console.log(oldTypes);
     this.setState({ types: oldTypes });
   }
