@@ -102,7 +102,7 @@ class EditMachineTypeButton extends Component {
   render() {
     return (
       <span>
-        <Button type="primary" icon="edit" ghost onClick={this.showModal}>Edit</Button>
+        <Button type="primary" icon="edit" ghost onClick={this.showModal}>Edit Type</Button>
         <CollectionCreateForm
           wrappedComponentRef={this.saveFormRef}
           visible={this.state.visible}
