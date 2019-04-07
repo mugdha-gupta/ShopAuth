@@ -5,6 +5,8 @@ import NewMachineTypeButton from './NewMachineTypeButton';
 import DeleteMachineTypeButton from './DeleteMachineTypeButton'
 import EditMachineTypeButton from './EditMachineTypeButton';
 import EditMachineButton from './EditMachineButton';
+import DeleteMachineButton from './DeleteMachineButton'
+
 
 const columns = [
 {
@@ -57,6 +59,8 @@ class MachinePage extends Component {
       this.filterTypes = this.filterTypes.bind(this);
       this.addType = this.addType.bind(this);
       this.delType = this.delType.bind(this);
+      this.delMachine = this.delMachine.bind(this);
+      this.editMachine = this.editMachine.bind(this);
   }
 
   componentDidMount() {
@@ -111,7 +115,8 @@ class MachinePage extends Component {
               machineId: m.id,
               machineName: m.displayname,
               typeId: m.type.id,
-              editMachine: this.editMachine
+              editMachine: this.editMachine,
+              delMachine: this.delMachine
             };
           });
           
@@ -139,10 +144,16 @@ class MachinePage extends Component {
       <List
         header={<div style={{fontWeight: "bold"}}>Machines</div>}
         dataSource={this.state.machines[record.id]}
-        renderItem={item => (<List.Item>- {item.machineName} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EditMachineButton 
-          machine = {item}
-          types = {this.state.types}
-        /></List.Item>)}
+        renderItem={item => (<List.Item>- {item.machineName} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <EditMachineButton 
+            machine = {item}
+            types = {this.state.types}
+          />
+          <Divider type="vertical" />
+          <DeleteMachineButton 
+            machine = {item}
+          />
+        </List.Item>)}
       />
     );
 
@@ -207,7 +218,8 @@ class MachinePage extends Component {
       machineId: m.machineId,
       machineName: m.machineName,
       typeId: m.typeId,
-      editMachine: this.editMachine
+      editMachine: this.editMachine,
+      delMachine: this.delMachine
     }
     return newMachine;
   }
@@ -232,6 +244,19 @@ class MachinePage extends Component {
             console.log(newMachines);
             console.log(oldMachines);
           }
+          break;
+        }
+    }
+    this.setState({ machines: newMachineMap });
+  }
+
+  delMachine = (type, machineId) => {
+    var newMachineMap = this.state.machines;
+    var newMachines = newMachineMap[type];
+    for(var i = 0; i < newMachines.length; i++) {
+        if(newMachines[i].machineId === machineId) {
+          newMachines.splice(i, 1);
+          newMachineMap[type] = newMachines;
           break;
         }
     }
