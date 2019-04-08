@@ -7,9 +7,11 @@ import pexpect
 import threading
 import requests
 import json
-import time
+import time as sleep
 from datetime import datetime, date
 from datetime import time
+from kivy.core.window import Window
+
 
 user_card = ""
 machine_id = 2
@@ -99,14 +101,14 @@ class UserScreen(Screen):
 
 class WitnessScreen(Screen):
     def on_enter(self):
-        time.sleep(1)
+        sleep.sleep(1)
         t1 = threading.Thread(target=self.scanWitnessOrTimeout)
         t1.start()
 
     def scanWitnessOrTimeout(self):
         scanWitness = threading.Thread(target=self.scanWitness)
         scanWitness.start()
-        scanWitness.join(timeout=15)
+        scanWitness.join(timeout=10)
         if scanWitness.is_alive():
             sm.current = 'user'
 
@@ -124,7 +126,7 @@ class InvalidWitnessScreen(Screen):
         t1.start()
 
     def sleep(self):
-        time.sleep(3)
+        sleep.sleep(3)
         sm.current = 'witness'
 
 
@@ -134,15 +136,16 @@ class NoAuthScreen(Screen):
         t1.start()
 
     def sleep(self):
-        time.sleep(3)
+        sleep.sleep(3)
         sm.current = 'user'
 
 
 class TimerScreen(Screen):
     timeLeft = StringProperty()
 
-    def on_enter(self):
+    def on_pre_enter(self):
         # TODO: Turn on relay
+        print("here")
         self.startTime = datetime.now()
         timeInit = time(hour=int(apiResponse["time"].split(":")[0]), minute=int(apiResponse["time"].split(":")[1]),
                         second=int(apiResponse["time"].split(":")[2]))
@@ -155,14 +158,22 @@ class TimerScreen(Screen):
         currTimeLeft = self.timeLeftObject - (datetime.now() - self.startTime)
         if currTimeLeft.hour == 0 and currTimeLeft.minute == 0 and currTimeLeft.second == 0:
             # TODO: Logout
-            print("Finished")
-        self.timeLeft = str(currTimeLeft.time()).split(".")[0]
+            sm.current = 'user'
+        else:
+            self.timeLeft = str(currTimeLeft.time()).split(".")[0]
+
+    def on_pre_leave(self):
+        Clock.unschedule(self.timer)
 
 
 # Create the screen manager
 sm = ScreenManager()
 sm.add_widget(UserScreen(name='user'))
 sm.add_widget(WitnessScreen(name='witness'))
+
+
+
+
 sm.add_widget(NoAuthScreen(name='noAuth'))
 sm.add_widget(InvalidWitnessScreen(name='invalidWitness'))
 sm.add_widget(TimerScreen(name='timer'))
@@ -174,4 +185,5 @@ class TestApp(App):
 
 
 if __name__ == '__main__':
+    Window.fullscreen = 'auto'
     TestApp().run()
