@@ -5,16 +5,16 @@ USE authdb;
 CREATE TABLE IF NOT EXISTS authdb.user (
   id BIGINT NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (id),
-  scan_string VARCHAR(255) NOT NULL UNIQUE,
-  name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
+  scan_string VARCHAR(100) NOT NULL UNIQUE,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL,
   admin_level TINYINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS authdb.machine_type (
   id BIGINT NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (id),
-  displayname VARCHAR (255) NOT NULL,
+  displayname VARCHAR (100) NOT NULL,
   time1 TIME
 );
 
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS authdb.machine (
   PRIMARY KEY (id),
   type BIGINT,
   FOREIGN KEY (type) REFERENCES authdb.machine_type (id) ON DELETE CASCADE,
-  displayname VARCHAR(255) NOT NULL
+  displayname VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS authdb.auth (
@@ -43,5 +43,5 @@ CREATE TABLE IF NOT EXISTS authdb.log (
   FOREIGN KEY (machine) REFERENCES authdb.machine (id) ON DELETE SET NULL,
   user BIGINT,
   FOREIGN KEY (user) REFERENCES authdb.user (id) ON DELETE SET NULL,
-  witness VARCHAR(255) NOT NULL
+  witness VARCHAR(100) NOT NULL
 );
