@@ -12,13 +12,31 @@ import requests
 import json
 import time as sleep
 from datetime import datetime, date
-from datetime import time
+from datetime import time, timedelta
 
+#Control relay using gpio 4
+
+import RPi.GPIO as GPIO
+relay_pin = 4 #gpio 4
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(relay_pin, GPIO.OUT)
+GPIO.output(relay_pin, GPIO.HIGH)
+
+
+b4_pin=13
+b3_pin=6
+b1_pin=19
+b2_pin=26
+GPIO.setup(b1_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(b2_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(b3_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(b4_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 user_card = ""
 machine_id = 1
-API_ENDPOINT = "http://192.168.0.2:8080/login/auth"
-LOGOUT_ENDPOINT = "http://localhost:8080/login/logout"
+API_ENDPOINT = "http://192.168.0.10:8080/login/auth"
+LOGOUT_ENDPOINT = "http://192.168.0.10:8080/login/logout"
 apiResponse = {}
 witness = ""
 
@@ -212,7 +230,9 @@ class TimerScreen(Screen):
 
     def on_pre_enter(self):
         # TODO: Turn on relay
-        print("here")
+        global relay_pin
+        print("turning relay on")
+        GPIO.output(relay_pin, GPIO.LOW)
         self.startTime = datetime.now()
         timeInit = time(hour=int(apiResponse["time"].split(":")[0]), minute=int(apiResponse["time"].split(":")[1]),
                         second=int(apiResponse["time"].split(":")[2]))
@@ -223,8 +243,20 @@ class TimerScreen(Screen):
 
     def timer(self, dt):
         currTimeLeft = self.timeLeftObject - (datetime.now() - self.startTime)
-        if currTimeLeft.hour == 0 and currTimeLeft.minute == 0 and currTimeLeft.second == 0:
+	b1=GPIO.input(b1_pin)
+	b2=GPIO.input(b2_pin)
+	b3=GPIO.input(b3_pin)
+	b4=GPIO.input(b4_pin)
+        done = False
+        if b4 == False:
+            done = True
+        elif b1 == False:
+            self.timeLeftObject += timedelta(seconds=10)
+        if done or (currTimeLeft.hour == 0 and currTimeLeft.minute == 0 and currTimeLeft.second == 0):
             # TODO: Logout
+	    global relay_pin
+	    print("turning relay off")
+	    GPIO.output(relay_pin, GPIO.HIGH)
             sm.current = 'user'
 	    data = json.dumps({"machine_id": machine_id,
                                "scan_string": user_card,
