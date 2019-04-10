@@ -3,7 +3,7 @@ os.environ['KIVY_GL_BACKEND'] = 'gl'
 import kivy
 from kivy.app import App
 from kivy.lang import Builder
-from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.screenmanager import ScreenManager, Screen, CardTransition
 from kivy.properties import StringProperty
 from kivy.clock import Clock
 import pexpect
@@ -44,6 +44,8 @@ API_ENDPOINT = "http://192.168.0.10:8080/login/auth"
 LOGOUT_ENDPOINT = "http://192.168.0.10:8080/login/logout"
 apiResponse = {}
 witness = ""
+witnessTimeout = False
+shutdown = False
 
 global scancard
 
@@ -101,8 +103,9 @@ Builder.load_string("""
             size: self.size
     BoxLayout:
         Label:
-            text: 'You are not authenticated for this machine :('
+            text: 'You are not authenticated\\nfor this machine :('
             font_size: '50sp'
+            halign: 'center'
 
 <NoUserScreen>:
     canvas.before:
@@ -160,7 +163,7 @@ Builder.load_string("""
     canvas.before:
         BorderImage:
             border: 0, 0, 0, 0
-            source: './BackgroundPi.png'
+            source: './BackgroundPiTimer.png'
             pos: self.pos
             size: self.size
     BoxLayout:
@@ -177,9 +180,10 @@ class UserScreen(Screen):
         self.t1 = threading.Thread(target=self.scanAndAuth)
         self.t1.start()
 
-    #def stop(self, *largs):
-     #   self.t1.kill(signal.SIGINT)
-      #  super(UserScreen, self).stop(*largs)
+    def stop(self, *largs):
+        global shutdown
+        shutdown = True
+        super(UserScreen, self).stop(*largs)
 
     def scanAndAuth(self):
         global user_card
@@ -212,22 +216,27 @@ class UserScreen(Screen):
 
 class WitnessScreen(Screen):
     def on_enter(self):
+        global witnessTimeout
+        witnessTimeout = False
         sleep.sleep(1)
         t1 = threading.Thread(target=self.scanWitnessOrTimeout)
         t1.start()
 
     def scanWitnessOrTimeout(self):
+        global witnessTimeout
         scanWitness = threading.Thread(target=self.scanWitness)
         scanWitness.start()
         scanWitness.join(timeout=10)
         if scanWitness.is_alive():
-            scanWitnes
+            witnessTimeout = True
             sm.current = 'user'
 
     def scanWitness(self):
         global witness
         witness = scancard(12)
-        if witness == user_card:
+        if witnessTimeout:
+            pass
+        elif witness == user_card:
             sm.current = 'invalidWitness'
         else:
             sm.current = 'timer'
@@ -331,15 +340,14 @@ class TimerScreen(Screen):
                     sm.current = 'error'
             except:
                 sm.current = 'error'
-        else:
-            self.timeLeft = str(currTimeLeft.time()).split(".")[0]
+        self.timeLeft = str(currTimeLeft.time()).split(".")[0]
 
     def on_pre_leave(self):
         Clock.unschedule(self.timer)
 
 
 # Create the screen manager
-sm = ScreenManager()
+sm = ScreenManager(transition=CardTransition())
 sm.add_widget(UserScreen(name='user'))
 sm.add_widget(WitnessScreen(name='witness'))
 sm.add_widget(NoAuthScreen(name='noAuth'))
