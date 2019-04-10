@@ -18,7 +18,9 @@ from datetime import time
 user_card = ""
 machine_id = 1
 API_ENDPOINT = "http://192.168.0.2:8080/login/auth"
+LOGOUT_ENDPOINT = "http://localhost:8080/login/logout"
 apiResponse = {}
+witness = ""
 
 global scancard
 
@@ -61,6 +63,28 @@ Builder.load_string("""
             text: 'You are not authenticated for this machine :('
             font_size: '50sp'
 
+<NoUserScreen>:
+    BoxLayout:
+        Label:
+            text: 'You are not in the system.\\n\\nSee the machine shop supervisor'
+            font_size: '50sp'
+            halign: 'center'
+            
+<ApiOffline>:
+    BoxLayout:
+        Label:
+            text: 'Api is offline'
+            font_size: '50sp'
+            halign: 'center'
+
+<Error>:
+    BoxLayout:
+        Label:
+            text: 'Error'
+            font_size: '50sp'
+            halign: 'center'
+
+
 <InvalidWitnessScreen>:
     BoxLayout:
         Label:
@@ -85,22 +109,31 @@ class UserScreen(Screen):
     def scanAndAuth(self):
         global user_card
         global apiResponse
+        global witness
         user_card = scancard()
         data = json.dumps({"machine_id": machine_id,
                            "scan_string": user_card})
         headers = {'content-type': 'application/json'}
-        r = requests.post(url=API_ENDPOINT, data=data, headers=headers)
-        apiResponse = r.json()
-        print(apiResponse)
-        # TODO: Handle response errors
-        if apiResponse["authenticated"]:
-            if apiResponse["needWitness"]:
-                sm.current = 'witness'
+	try:
+            r = requests.post(url=API_ENDPOINT, data=data, headers=headers)
+            apiResponse = r.json()
+            print(apiResponse)
+            if r.status_code != 200:
+                if r.status_code == 404:
+                    sm.current = 'noUser'
+            elif apiResponse["authenticated"]:
+                if apiResponse["needWitness"]:
+                    sm.current = 'witness'
+                else:
+                    witness = "None"
+                    sm.current = 'timer'
             else:
-                sm.current = 'timer'
-        else:
-            sm.current = 'noAuth'
+                sm.current = 'noAuth'
 
+        except requests.exceptions.ConnectionError:
+            sm.current = 'apiOffline'
+        except:
+            sm.current = 'error'
 
 class WitnessScreen(Screen):
     def on_enter(self):
@@ -116,6 +149,7 @@ class WitnessScreen(Screen):
             sm.current = 'user'
 
     def scanWitness(self):
+        global witness
         witness = scancard()
         if witness == user_card:
             sm.current = 'invalidWitness'
@@ -134,6 +168,36 @@ class InvalidWitnessScreen(Screen):
 
 
 class NoAuthScreen(Screen):
+    def on_enter(self):
+        t1 = threading.Thread(target=self.sleep)
+        t1.start()
+
+    def sleep(self):
+        sleep.sleep(3)
+        sm.current = 'user'
+
+
+class NoUserScreen(Screen):
+    def on_enter(self):
+        t1 = threading.Thread(target=self.sleep)
+        t1.start()
+
+    def sleep(self):
+        sleep.sleep(3)
+        sm.current = 'user'
+
+
+class Error(Screen):
+    def on_enter(self):
+        t1 = threading.Thread(target=self.sleep)
+        t1.start()
+
+    def sleep(self):
+        sleep.sleep(3)
+        sm.current = 'user'
+
+
+class ApiOffline(Screen):
     def on_enter(self):
         t1 = threading.Thread(target=self.sleep)
         t1.start()
@@ -162,6 +226,18 @@ class TimerScreen(Screen):
         if currTimeLeft.hour == 0 and currTimeLeft.minute == 0 and currTimeLeft.second == 0:
             # TODO: Logout
             sm.current = 'user'
+	    data = json.dumps({"machine_id": machine_id,
+                               "scan_string": user_card,
+                               "witness": witness})
+            headers = {'content-type': 'application/json'}
+            try:
+                r = requests.post(url=LOGOUT_ENDPOINT, data=data, headers=headers)
+                print(r.json())
+                sm.current = 'user'
+                if r.status_code != 200:
+                    sm.current = 'error'
+            except:
+                sm.current = 'error'
         else:
             self.timeLeft = str(currTimeLeft.time()).split(".")[0]
 
@@ -173,11 +249,10 @@ class TimerScreen(Screen):
 sm = ScreenManager()
 sm.add_widget(UserScreen(name='user'))
 sm.add_widget(WitnessScreen(name='witness'))
-
-
-
-
 sm.add_widget(NoAuthScreen(name='noAuth'))
+sm.add_widget(NoUserScreen(name='noUser'))
+sm.add_widget(ApiOffline(name='apiOffline'))
+sm.add_widget(Error(name='error'))
 sm.add_widget(InvalidWitnessScreen(name='invalidWitness'))
 sm.add_widget(TimerScreen(name='timer'))
 
