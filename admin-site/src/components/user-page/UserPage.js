@@ -5,6 +5,8 @@ import NewUserButton from './NewUserButton'
 import EditUserButton from './EditUserButton'
 import DeleteUserButton from './DeleteUserButton'
 import EditAuthButton from './EditAuthButton'
+import API_ADDRESS from '../../config'
+
 
 const columns = [
 {
@@ -72,7 +74,7 @@ class UserPage extends Component {
 
   componentDidMount() {
     axios
-      .get("http://localhost:8080/user")
+      .get(API_ADDRESS + "/user")
       .then(response => {
 
         // create an array of users only with relevant data and init an empty list of auths for each user
@@ -120,7 +122,7 @@ class UserPage extends Component {
     //Call api to get auths for expanded user if the row is expanded and it has not already been retrieved
     if(!this.state.obtainedAuths.includes(record.id)){
       axios
-        .post("http://localhost:8080/auth/findByUser", {
+        .post(API_ADDRESS + "/auth/findByUser", {
           id: record.id
         })
         .then(response => {

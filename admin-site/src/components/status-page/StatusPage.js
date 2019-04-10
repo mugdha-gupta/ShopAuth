@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import {Table, AutoComplete} from 'antd';
+import API_ADDRESS from '../../config'
 
 const columns = [
 {
@@ -35,7 +36,7 @@ class StatusPage extends Component {
 
   componentDidMount() {
     axios
-      .get("http://localhost:8080/login")
+      .get(API_ADDRESS + "/login")
       .then(response => {
 
         // create an array of logins only with relevant data

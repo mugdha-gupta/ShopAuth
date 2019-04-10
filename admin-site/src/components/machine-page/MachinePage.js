@@ -4,6 +4,7 @@ import {Table, List, Divider, AutoComplete} from 'antd';
 import NewMachineTypeButton from './NewMachineTypeButton';
 import DeleteMachineTypeButton from './DeleteMachineTypeButton'
 import EditMachineTypeButton from './EditMachineTypeButton';
+import API_ADDRESS from '../../config'
 
 const columns = [
 {
@@ -60,7 +61,7 @@ class MachinePage extends Component {
 
   componentDidMount() {
     axios
-      .get("http://localhost:8080/machinetype")
+      .get(API_ADDRESS + "/machinetype")
       .then(response => {
 
         // create an array of users only with relevant data and init an empty list of auths for each user
@@ -102,7 +103,7 @@ class MachinePage extends Component {
   expandRow = (record)  => {
     if(!this.state.obtainedMachines.includes(record.typeName)){
       axios
-        .post("http://localhost:8080/machine/filter", {typeId: record.id})
+        .post(API_ADDRESS + "/machine/filter", {typeId: record.id})
         .then(response => {
           // create an array of users only with relevant data
           const newTypeMachines = response.data.map(m => {

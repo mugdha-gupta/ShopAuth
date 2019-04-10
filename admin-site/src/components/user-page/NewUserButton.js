@@ -3,6 +3,7 @@ import {
 } from 'antd';
 import React, { Component } from "react";
 import axios from "axios";
+import API_ADDRESS from '../../config'
 
 const RadioGroup = Radio.Group;
 
@@ -121,7 +122,7 @@ class NewUserButton extends Component {
         const adminlevel = values.adminlevel;
         console.log('Received values of form: ', name, email, cardid, adminlevel);
         axios
-        .post("http://localhost:8080/user", {name:name, email:email, admin_level:adminlevel, scanString:cardid})
+        .post(API_ADDRESS + "/user", {name:name, email:email, admin_level:adminlevel, scanString:cardid})
         .then(u => {
           const user = {
             id: u.data.id,

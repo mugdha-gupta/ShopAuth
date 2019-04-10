@@ -4,6 +4,7 @@ import {
 import React, { Component } from "react";
 import axios from "axios";
 import moment from 'moment';
+import API_ADDRESS from '../../config'
 
 const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
   // eslint-disable-next-line
@@ -73,7 +74,7 @@ class NewMachineTypeButton extends Component {
       const time = values.maxtime.format('HH:mm:ss');
 
       axios
-        .post("http://localhost:8080/machinetype", {displayname:name, time1:time})
+        .post(API_ADDRESS + "/machinetype", {displayname:name, time1:time})
         .then(u => {
           alert('success');
           const type = {
