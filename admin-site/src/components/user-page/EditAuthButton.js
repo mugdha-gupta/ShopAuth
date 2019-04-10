@@ -3,6 +3,7 @@ import {
 } from 'antd';
 import React, { Component } from "react";
 import axios from "axios";
+import API_ADDRESS from '../../config'
 
 const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
   // eslint-disable-next-line
@@ -71,7 +72,7 @@ class EditAuthButton extends Component {
         if(this.state.currAuths.filter(auth => auth === t).length === 0){
           console.log("Target Key to add: " + t)
             axios
-             .post("http://localhost:8080/auth", {typeId:t, userId:userId})
+             .post(API_ADDRESS + "/auth", {typeId:t, userId:userId})
              .then(response => {
                console.log('successfully added ' + t);
              })
@@ -96,7 +97,7 @@ class EditAuthButton extends Component {
       if(this.state.targetKeys.filter(key => key === auth).length === 0){
           console.log("{typeId:" + auth.typeId + ", userId:" + userId + "}")
           axios
-            .delete("http://localhost:8080/auth", {data: {typeId:auth, userId:userId}})
+            .delete(API_ADDRESS + "/auth", {data: {typeId:auth, userId:userId}})
             .then(response => {
                console.log('successfully removed ' + auth);
             })
@@ -118,7 +119,7 @@ class EditAuthButton extends Component {
 
   componentDidMount() {
     axios
-        .get("http://localhost:8080/machinetype")
+        .get(API_ADDRESS + "/machinetype")
         .then(response => {
 
           // create an array of users only with relevant data and init an empty list of auths for each user
@@ -140,7 +141,7 @@ class EditAuthButton extends Component {
         })
         .catch(error => console.log(error));
     axios
-        .post("http://localhost:8080/auth/findByUser", {
+        .post(API_ADDRESS + "/auth/findByUser", {
           id: this.props.user.id
         })
         .then(response => {

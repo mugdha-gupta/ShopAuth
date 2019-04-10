@@ -3,12 +3,13 @@ import {
 } from 'antd';
 import React, { Component } from "react";
 import axios from "axios";
+import API_ADDRESS from '../../config'
 
 class DeleteUserButton extends Component {
   handleDelete = () => {
     const id = this.props.id;
     axios
-      .delete("http://localhost:8080/user/"+id)
+      .delete(API_ADDRESS + "/user/"+id)
       .then(response => {
         this.props.delUser(id);
       })
