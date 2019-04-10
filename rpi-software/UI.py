@@ -13,6 +13,7 @@ import json
 import time as sleep
 from datetime import datetime, date
 from datetime import time, timedelta
+import signal
 
 #Control relay using gpio 4
 
@@ -21,7 +22,7 @@ relay_pin = 4 #gpio 4
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(relay_pin, GPIO.OUT)
-GPIO.output(relay_pin, GPIO.HIGH)
+GPIO.output(relay_pin, GPIO.LOW)
 
 
 b4_pin=13
@@ -32,6 +33,10 @@ GPIO.setup(b1_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(b2_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(b3_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(b4_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+lastb1press_time = datetime.now()
+lastb2press_time = datetime.now()
+lastb3press_time = datetime.now()
+lastb4press_time = datetime.now()
 
 user_card = ""
 machine_id = 1
@@ -43,12 +48,12 @@ witness = ""
 global scancard
 
 
-def scancard():
+def scancard(timeout):
     # TODO: make sure this subprocess dies at end of function
     try:
         p = pexpect.spawn('pcsc_scan')
-        p.expect("ATR:",None)
-        p.expect("ATR:",None)
+        p.expect("ATR:",timeout)
+        p.expect("ATR:",timeout)
         scanString = p.before.replace(" ", "").replace("\n", "").replace("\r", "").replace("\x1b","").replace("[35m","").replace("[0m","")
         print(scanString)
         return scanString
@@ -64,24 +69,48 @@ def scancard():
 # property manager that gives you the instance of the ScreenManager used.
 Builder.load_string("""
 <UserScreen>:
+    canvas.before:
+        BorderImage:
+            border: 0, 0, 0, 0
+            source: './BackgroundPi.png'
+            pos: self.pos
+            size: self.size
     BoxLayout:
         Label:
             text: 'Please tap your comet card =>'
             font_size: '50sp'
 
 <WitnessScreen>:
+    canvas.before:
+        BorderImage:
+            border: 0, 0, 0, 0
+            source: './BackgroundPi.png'
+            pos: self.pos
+            size: self.size    
     BoxLayout:
         Label:
             text: 'Please tap witness comet card =>'
             font_size: '50sp'
 
 <NoAuthScreen>:
+    canvas.before:
+        BorderImage:
+            border: 0, 0, 0, 0
+            source: './BackgroundPi.png'
+            pos: self.pos
+            size: self.size
     BoxLayout:
         Label:
             text: 'You are not authenticated for this machine :('
             font_size: '50sp'
 
 <NoUserScreen>:
+    canvas.before:
+        BorderImage:
+            border: 0, 0, 0, 0
+            source: './BackgroundPi.png'
+            pos: self.pos
+            size: self.size
     BoxLayout:
         Label:
             text: 'You are not in the system.\\n\\nSee the machine shop supervisor'
@@ -89,6 +118,12 @@ Builder.load_string("""
             halign: 'center'
             
 <ApiOffline>:
+    canvas.before:
+        BorderImage:
+            border: 0, 0, 0, 0
+            source: './BackgroundPi.png'
+            pos: self.pos
+            size: self.size
     BoxLayout:
         Label:
             text: 'Api is offline'
@@ -96,6 +131,12 @@ Builder.load_string("""
             halign: 'center'
 
 <Error>:
+    canvas.before:
+        BorderImage:
+            border: 0, 0, 0, 0
+            source: './BackgroundPi.png'
+            pos: self.pos
+            size: self.size
     BoxLayout:
         Label:
             text: 'Error'
@@ -104,12 +145,24 @@ Builder.load_string("""
 
 
 <InvalidWitnessScreen>:
+    canvas.before:
+        BorderImage:
+            border: 0, 0, 0, 0
+            source: './BackgroundPi.png'
+            pos: self.pos
+            size: self.size
     BoxLayout:
         Label:
             text: 'Witness must be a different person'
             font_size: '50sp'
 
 <TimerScreen>:
+    canvas.before:
+        BorderImage:
+            border: 0, 0, 0, 0
+            source: './BackgroundPi.png'
+            pos: self.pos
+            size: self.size
     BoxLayout:
         Label:
             text: "%s" % (root.timeLeft)
@@ -121,14 +174,18 @@ Builder.load_string("""
 # Declare both screens
 class UserScreen(Screen):
     def on_enter(self):
-        t1 = threading.Thread(target=self.scanAndAuth)
-        t1.start()
+        self.t1 = threading.Thread(target=self.scanAndAuth)
+        self.t1.start()
+
+    #def stop(self, *largs):
+     #   self.t1.kill(signal.SIGINT)
+      #  super(UserScreen, self).stop(*largs)
 
     def scanAndAuth(self):
         global user_card
         global apiResponse
         global witness
-        user_card = scancard()
+        user_card = scancard(None)
         data = json.dumps({"machine_id": machine_id,
                            "scan_string": user_card})
         headers = {'content-type': 'application/json'}
@@ -164,11 +221,12 @@ class WitnessScreen(Screen):
         scanWitness.start()
         scanWitness.join(timeout=10)
         if scanWitness.is_alive():
+            scanWitnes
             sm.current = 'user'
 
     def scanWitness(self):
         global witness
-        witness = scancard()
+        witness = scancard(12)
         if witness == user_card:
             sm.current = 'invalidWitness'
         else:
@@ -229,17 +287,15 @@ class TimerScreen(Screen):
     timeLeft = StringProperty()
 
     def on_pre_enter(self):
-        # TODO: Turn on relay
         global relay_pin
         print("turning relay on")
-        GPIO.output(relay_pin, GPIO.LOW)
+        GPIO.output(relay_pin, GPIO.HIGH)
         self.startTime = datetime.now()
         timeInit = time(hour=int(apiResponse["time"].split(":")[0]), minute=int(apiResponse["time"].split(":")[1]),
                         second=int(apiResponse["time"].split(":")[2]))
         self.timeLeftObject = datetime.combine(date.min, timeInit)
         self.timeLeft = str(self.timeLeftObject.time()).split(".")[0]
         Clock.schedule_interval(self.timer, 0.01)
-        # TODO: Add Button code
 
     def timer(self, dt):
         currTimeLeft = self.timeLeftObject - (datetime.now() - self.startTime)
@@ -248,15 +304,20 @@ class TimerScreen(Screen):
 	b3=GPIO.input(b3_pin)
 	b4=GPIO.input(b4_pin)
         done = False
-        if b4 == False:
+        global lastb1press_time
+        global lastb4press_time
+        if b4 == False and b3 == False:
             done = True
         elif b1 == False:
-            self.timeLeftObject += timedelta(seconds=10)
+            
+            lagperiod = lastb1press_time + timedelta(seconds=1)
+            if datetime.now() > lagperiod:
+                lastb1press_time = datetime.now() 
+                self.timeLeftObject += timedelta(seconds=10)
         if done or (currTimeLeft.hour == 0 and currTimeLeft.minute == 0 and currTimeLeft.second == 0):
-            # TODO: Logout
 	    global relay_pin
 	    print("turning relay off")
-	    GPIO.output(relay_pin, GPIO.HIGH)
+	    GPIO.output(relay_pin, GPIO.LOW)
             sm.current = 'user'
 	    data = json.dumps({"machine_id": machine_id,
                                "scan_string": user_card,
