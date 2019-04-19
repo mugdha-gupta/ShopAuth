@@ -65,7 +65,7 @@ class StatusPage extends Component {
         const newLogs = response.data.map(u => {
           let startraw = new Date(u.starttime)
           let sYear = startraw.getFullYear().toString()
-          let sMonth = ("0" + startraw.getMonth().toString()).slice(-2);
+          let sMonth = ("0" + (startraw.getMonth()+1).toString()).slice(-2);
           let sDate = ("0" + startraw.getDate().toString()).slice(-2);
           let sHours = ("0" + startraw.getHours().toString()).slice(-2);
           let sMinutes = ("0" + startraw.getMinutes().toString()).slice(-2)
@@ -73,7 +73,7 @@ class StatusPage extends Component {
           let startString = sYear+'-'+sMonth+'-'+sDate+' '+sHours+':'+sMinutes+':'+sSeconds
           let endraw = new Date(u.endtime)
           let eYear = endraw.getFullYear().toString()
-          let eMonth = ("0" + endraw.getMonth().toString()).slice(-2);
+          let eMonth = ("0" + (endraw.getMonth()+1).toString()).slice(-2);
           let eDate = ("0" + endraw.getDate().toString()).slice(-2);
           let eHours = ("0" + endraw.getHours().toString()).slice(-2)
           let eMinutes = ("0" + endraw.getMinutes().toString()).slice(-2)
