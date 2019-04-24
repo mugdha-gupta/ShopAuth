@@ -4,7 +4,13 @@ import {Table, List, Divider, AutoComplete} from 'antd';
 import NewMachineTypeButton from './NewMachineTypeButton';
 import DeleteMachineTypeButton from './DeleteMachineTypeButton'
 import EditMachineTypeButton from './EditMachineTypeButton';
+
+import EditMachineButton from './EditMachineButton';
+import DeleteMachineButton from './DeleteMachineButton'
+
+
 import API_ADDRESS from '../../config'
+
 
 const columns = [
 {
@@ -57,6 +63,8 @@ class MachinePage extends Component {
       this.filterTypes = this.filterTypes.bind(this);
       this.addType = this.addType.bind(this);
       this.delType = this.delType.bind(this);
+      this.delMachine = this.delMachine.bind(this);
+      this.editMachine = this.editMachine.bind(this);
   }
 
   componentDidMount() {
@@ -110,11 +118,15 @@ class MachinePage extends Component {
             return {
               machineId: m.id,
               machineName: m.displayname,
+              typeId: m.type.id,
+              editMachine: this.editMachine,
+              delMachine: this.delMachine
             };
           });
           
           var newMachines = this.state.machines;
           newMachines[record.id] = newTypeMachines;
+          console.log(newMachines[record.id]);
 
           // Add user to list of users where auths were obtained to avoid repeat retrievals
           var newObtainedMachines = this.state.obtainedMachines;
@@ -136,7 +148,16 @@ class MachinePage extends Component {
       <List
         header={<div style={{fontWeight: "bold"}}>Machines</div>}
         dataSource={this.state.machines[record.id]}
-        renderItem={item => (<List.Item>- {item.machineName}</List.Item>)}
+        renderItem={item => (<List.Item>- {item.machineName} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <EditMachineButton 
+            machine = {item}
+            types = {this.state.types}
+          />
+          <Divider type="vertical" />
+          <DeleteMachineButton 
+            machine = {item}
+          />
+        </List.Item>)}
       />
     );
 
@@ -194,6 +215,56 @@ class MachinePage extends Component {
         }
     }
     this.setState({ types: oldTypes });
+  }
+
+  makeMachine = (m) => {
+    const newMachine = {
+      machineId: m.machineId,
+      machineName: m.machineName,
+      typeId: m.typeId,
+      editMachine: this.editMachine,
+      delMachine: this.delMachine
+    }
+    return newMachine;
+  }
+
+  editMachine = (oldType, machine) => {
+    var newMachineMap = this.state.machines;
+    var oldMachines = newMachineMap[oldType];
+    var newMachines = newMachineMap[machine.typeId];
+    for(var i = 0; i < oldMachines.length; i++) {
+        if(oldMachines[i].machineId === machine.machineId) {
+          const newMachine = this.makeMachine(machine);
+          if(oldType == machine.typeId){
+            newMachines.splice(i, 1, newMachine);
+            newMachineMap[machine.typeId] = newMachines;
+            console.log(newMachines);
+          }
+          else{
+            oldMachines.splice(i, 1);
+            newMachines.push(newMachine);
+            newMachineMap[oldType] = oldMachines;
+            newMachineMap[machine.typeId] = newMachines;
+            console.log(newMachines);
+            console.log(oldMachines);
+          }
+          break;
+        }
+    }
+    this.setState({ machines: newMachineMap });
+  }
+
+  delMachine = (type, machineId) => {
+    var newMachineMap = this.state.machines;
+    var newMachines = newMachineMap[type];
+    for(var i = 0; i < newMachines.length; i++) {
+        if(newMachines[i].machineId === machineId) {
+          newMachines.splice(i, 1);
+          newMachineMap[type] = newMachines;
+          break;
+        }
+    }
+    this.setState({ machines: newMachineMap });
   }
 
   render() {

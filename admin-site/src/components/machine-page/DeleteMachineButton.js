@@ -1,0 +1,36 @@
+import {Popconfirm, Button} from 'antd';
+import React, { Component } from "react";
+import axios from "axios";
+
+class DeleteMachineButton extends Component {
+  handleDelete = () => {
+    const id = this.props.machine.machineId;
+    const type = this.props.machine.typeId;
+    axios
+      .delete("http://localhost:8080/machine/"+id)
+      .then(response => {
+        this.props.machine.delMachine(type, id);
+      })
+      .catch((error) => {
+        // Error
+        console.log(error);
+        alert('error could not delete');
+      });
+  }
+
+  saveFormRef = (formRef) => {
+    this.formRef = formRef;
+  }
+  
+  render() {
+    return (
+      <span>
+      <Popconfirm placement="bottom" title="Are you sure you want to delete this machine?" onConfirm={this.handleDelete.bind(this)} okText="Yes" cancelText="No">
+        <Button type="primary" icon="delete" ghost onClick={this.showModal}>Delete</Button>
+      </Popconfirm>
+      </span>
+    );
+  }
+}
+
+export default DeleteMachineButton;
