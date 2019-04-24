@@ -5,6 +5,7 @@ import {
   HashRouter
 } from "react-router-dom";
 import StatusPage from "./components/status-page/StatusPage";
+import LogPage from "./components/log-page/LogPage";
 import UserPage from "./components/user-page/UserPage";
 import MachinePage from "./components/machine-page/MachinePage";
 import AdminModeSwitch from "./components/AdminModeSwitch";
@@ -27,11 +28,13 @@ class Main extends Component {
             <li><NavLink exact to="/">Status</NavLink></li>
             <li><NavLink to="/users">Users</NavLink></li>
             <li><NavLink to="/machines">Machines</NavLink></li>
+            <li><NavLink to="/logs">Logs</NavLink></li>
           </ul>
           <div className="content">
             <Route exact path="/" component={StatusPage}/>
             <Route path="/users" component={UserPage}/>
             <Route path="/machines" component={MachinePage}/>
+            <Route path="/logs" component={LogPage}/>
           </div>
         </div>
       </HashRouter>

@@ -1,12 +1,13 @@
 import {Popconfirm, Button} from 'antd';
 import React, { Component } from "react";
 import axios from "axios";
+import API_ADDRESS from '../../config'
 
 class DeleteMachineTypeButton extends Component {
   handleDelete = () => {
     const id = this.props.id;
     axios
-      .delete("http://localhost:8080/machinetype/"+id)
+      .delete(API_ADDRESS + "/machinetype/"+id)
       .then(response => {
         this.props.delType(id);
       })

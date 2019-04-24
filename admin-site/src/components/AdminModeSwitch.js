@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Switch } from 'antd';
 import axios from "axios";
+import API_ADDRESS from '../config'
 
 
  
@@ -17,7 +18,7 @@ class AdminModeSwitch extends Component {
 
   componentDidMount() {
     axios
-    .post("http://localhost:8080/login/getadmin")
+    .post(API_ADDRESS + "/login/getadmin")
     .then(response => {
       console.log(response)
       const newadminpresent = response.data.adminPresent
@@ -40,7 +41,7 @@ class AdminModeSwitch extends Component {
   onChange(checked) {
   const adminpresent = checked;
   axios
-    .post("http://localhost:8080/login/setadmin", {adminPresent:adminpresent})
+    .post(API_ADDRESS + "/login/setadmin", {adminPresent:adminpresent})
     .then(response => {
       console.log('success');
       const newState = Object.assign({}, this.state, {

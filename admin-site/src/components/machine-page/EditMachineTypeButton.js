@@ -2,6 +2,7 @@ import {Button, Modal, Form, Input, TimePicker, } from 'antd';
 import React, { Component } from "react";
 import axios from "axios";
 import moment from 'moment';
+import API_ADDRESS from '../../config'
 
 
 const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
@@ -73,7 +74,7 @@ class EditMachineTypeButton extends Component {
       const time = values.maxtime.format('HH:mm:ss');
         console.log('Received values of form: ', typeName, time);
         axios
-        .put("http://localhost:8080/machinetype/"+id, {displayname:typeName, time1:time})
+        .put(API_ADDRESS + "/machinetype/"+id, {displayname:typeName, time1:time})
         .then(u => {
           const type = {
             id: u.data.id,

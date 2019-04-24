@@ -3,6 +3,7 @@ import {
 } from 'antd';
 import React, { Component } from "react";
 import axios from "axios";
+import API_ADDRESS from '../../config'
 
 const RadioGroup = Radio.Group;
 
@@ -116,7 +117,7 @@ class EditUserButton extends Component {
         const adminlevel = values.adminlevel;
         console.log('Received values of form: ', name, email, cardid, adminlevel);
         axios
-        .put("http://localhost:8080/user/"+id, {name:name, email:email, admin_level:adminlevel, scanString:cardid})
+        .put(API_ADDRESS + "/user/"+id, {name:name, email:email, admin_level:adminlevel, scanString:cardid})
         .then(u => {
           const user = {
             id: u.data.id,

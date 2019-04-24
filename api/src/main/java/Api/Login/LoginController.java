@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -72,24 +73,26 @@ public class LoginController {
 
     @ApiOperation(value = "Authenticate a user by scan string for a certain machine by ID")
     @PostMapping("/logout")
-    public Log logout(@Valid @RequestBody LogCreator body){
+    public Log logout(@Valid @RequestBody LogoutBody body){
         //Get machine
-        return machineRepository.findById(body.getMachine()).map(machine -> {
+        return machineRepository.findById(body.getMachine_id()).map(machine -> {
             //check if the user has logged into the machine
+            Timestamp startTime;
             if (status.containsKey(machine))
                 //remove machine from status
-                status.remove(machine);
+                startTime = status.remove(machine).getStart_time();
             else
                 //if the machine is not in use throw error
-                throw new ResourceNotFoundException("MachineId " + body.getMachine() + " not in use currently");
+                throw new ResourceNotFoundException("MachineId " + body.getMachine_id() + " not in use currently");
             //Get User
-            return userRepository.findById(body.getUser()).map(user -> {
-                Log newLog = new Log(body.getStart_time(), body.getEnd_time(), user, machine, body.getWitness());
+            return userRepository.findByScanString(body.getScan_string()).map(user -> {
+
+                Log newLog = new Log(startTime, new Timestamp(System.currentTimeMillis()), user, machine, body.getWitness());
                 return logRepository.save(newLog);
                 //If User not found throw error
-            }).orElseThrow(() -> new ResourceNotFoundException("UserId " + body.getUser() + " not found"));
+            }).orElseThrow(() -> new ResourceNotFoundException("ScanString " + body.getScan_string() + " not found"));
             //If machine not found throw error
-        }).orElseThrow(() -> new ResourceNotFoundException("MachineId " + body.getMachine() + " not found"));
+        }).orElseThrow(() -> new ResourceNotFoundException("MachineId " + body.getMachine_id() + " not found"));
     }
 
 
