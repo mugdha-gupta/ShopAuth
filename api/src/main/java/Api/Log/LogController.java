@@ -44,15 +44,7 @@ public class LogController {
     @ApiOperation(value = "Create a new log")
     @PostMapping("")
     public Log create(@Valid @RequestBody LogCreator body){
-        //Get machine
-        return machineRepository.findById(body.getMachine()).map(machine -> {
-            //Get User
-            return userRepository.findById(body.getUser()).map(user -> {
-                Log newLog = new Log(body.getStart_time(), body.getEnd_time(), user.getName(), machine.getDisplayname(), body.getWitness());
-                return logRepository.save(newLog);
-                //If User not found throw error
-            }).orElseThrow(() -> new ResourceNotFoundException("userId " + body.getUser() + " not found"));
-            //If machine  not found throw error
-        }).orElseThrow(() -> new ResourceNotFoundException("machineId " + body.getMachine() + " not found"));
+        Log newLog = new Log(body.getStart_time(), body.getEnd_time(), body.getUser(), body.getMachine(), body.getWitness());
+        return logRepository.save(newLog);
     }
 }

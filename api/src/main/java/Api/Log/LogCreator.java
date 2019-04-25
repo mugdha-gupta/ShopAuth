@@ -15,11 +15,11 @@ public class LogCreator {
 
     @NonNull
     @ApiModelProperty(notes = "The id of the user who used the machine machine")
-    private Long user;
+    private String user;
 
     @NonNull
     @ApiModelProperty(notes = "The id of the machine used")
-    private Long machine;
+    private String machine;
 
     @ApiModelProperty(notes = "The scan string of the witness")
     private String witness;
@@ -27,7 +27,7 @@ public class LogCreator {
     public LogCreator() {
     }
 
-    public LogCreator(Timestamp start_time, Timestamp end_time, Long user, Long machine, String witness) {
+    public LogCreator(Timestamp start_time, Timestamp end_time, String user, String machine, String witness) {
         this.start_time = start_time;
         this.end_time = end_time;
         this.user = user;
@@ -51,19 +51,19 @@ public class LogCreator {
         this.end_time = end_time;
     }
 
-    public Long getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(Long user) {
+    public void setUser(String user) {
         this.user = user;
     }
 
-    public Long getMachine() {
+    public String getMachine() {
         return machine;
     }
 
-    public void setMachine(Long machine) {
+    public void setMachine(String machine) {
         this.machine = machine;
     }
 
