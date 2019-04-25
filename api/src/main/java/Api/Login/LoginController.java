@@ -87,7 +87,7 @@ public class LoginController {
             //Get User
             return userRepository.findByScanString(body.getScan_string()).map(user -> {
 
-                Log newLog = new Log(startTime, new Timestamp(System.currentTimeMillis()), user, machine, body.getWitness());
+                Log newLog = new Log(startTime, new Timestamp(System.currentTimeMillis()), user.getName(), machine.getDisplayname(), body.getWitness());
                 return logRepository.save(newLog);
                 //If User not found throw error
             }).orElseThrow(() -> new ResourceNotFoundException("ScanString " + body.getScan_string() + " not found"));
