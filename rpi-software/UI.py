@@ -1,3 +1,4 @@
+import sys
 import os
 os.environ['KIVY_GL_BACKEND'] = 'gl'
 import kivy
@@ -39,7 +40,7 @@ lastb3press_time = datetime.now()
 lastb4press_time = datetime.now()
 
 user_card = ""
-machine_id = 1
+machine_id = sys.stdin.read()
 API_ENDPOINT = "http://192.168.0.10:8080/login/auth"
 LOGOUT_ENDPOINT = "http://192.168.0.10:8080/login/logout"
 apiResponse = {}

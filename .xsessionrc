@@ -1,0 +1,2 @@
+
+python ~/ShopAuth/rpi-software/GetMachineId.py | python ~/ShopAuth/rpi-software/UI.py
