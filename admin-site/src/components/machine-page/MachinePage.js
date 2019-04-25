@@ -7,6 +7,7 @@ import EditMachineTypeButton from './EditMachineTypeButton';
 
 import EditMachineButton from './EditMachineButton';
 import DeleteMachineButton from './DeleteMachineButton'
+import AssignNewMachineButton from './AssignNewMachineButton'
 
 
 import API_ADDRESS from '../../config'
@@ -57,6 +58,8 @@ class MachinePage extends Component {
         autocomplete: [],
         // Filtered autocomplete data
         filteredAutoComplete: [],
+        //List of Unassigned machines
+        unassigned:[],
       }
 
       this.expandRow = this.expandRow.bind(this);
@@ -68,13 +71,29 @@ class MachinePage extends Component {
   }
 
   componentDidMount() {
+    //Find all unassigned machines and store them in a list
+    axios
+      .post(API_ADDRESS + "/machine/searchType", {name: "Unassigned"})
+      .then(response => {
+        const unassignedMachines = response.data.map(m => {
+          return {
+            machineId: m.id,
+            machineName: m.displayname,
+            typeId: m.type.id,
+            assignMachine: this.assignMachine
+          };
+        });
+        console.log(unassignedMachines);
+        this.setState({ unassigned: unassignedMachines });
+      })
+      .catch(error => console.log(error));
     axios
       .get(API_ADDRESS + "/machinetype")
       .then(response => {
 
         // create an array of users only with relevant data and init an empty list of auths for each user
         var newMachines = {};
-        const newTypes = response.data.map(t => {
+        const allTypes = response.data.map(t => {
           newMachines[t.id] = [];
           return {
             id: t.id,
@@ -84,11 +103,18 @@ class MachinePage extends Component {
           };
         });
 
+        const newTypes = allTypes.filter((machinetype) => {
+          let typeName = machinetype.typeName.toLowerCase()
+          return !typeName.includes("unassigned")
+        });
+
         //Update the autocomplete data
         var newAutocomplete = [];
         newTypes.forEach(function(machinetype) {
           newAutocomplete.push(machinetype.typeName);
         });
+
+
       
         // create a new "State" object without mutating 
         // the original State object. 
@@ -228,6 +254,18 @@ class MachinePage extends Component {
     return newMachine;
   }
 
+  assignMachine = (machine) => {
+    const newMachine = this.makeMachine(machine);
+    var newMachineMap = this.state.machines;
+    var newMachines = newMachineMap[machine.typeId];
+    newMachines.push(newMachine);
+    newMachineMap[machine.typeId] = newMachines;
+    console.log(newMachines);
+    var newUnassigned = this.state.unassigned;
+    newUnassigned.shift();
+    this.setState({ machines: newMachineMap });
+  }
+
   editMachine = (oldType, machine) => {
     var newMachineMap = this.state.machines;
     var oldMachines = newMachineMap[oldType];
@@ -268,13 +306,21 @@ class MachinePage extends Component {
   }
 
   render() {
-    return (
+    var unassignedMachine;
+    if(this.state.unassigned.length>0){
+      unassignedMachine = this.state.unassigned[0];
+      console.log(unassignedMachine);
+      return (
       <div>
         <span id="heading">
           <h2>Machine Types </h2>
           <NewMachineTypeButton addType={this.addType}/>
         </span>
         <div style={{float: "right"}}>
+          <AssignNewMachineButton 
+            machine = {unassignedMachine}
+            types = {this.state.types}
+          />
           <AutoComplete
             dataSource={this.state.filteredAutoComplete}
             placeholder="Search machines"
@@ -291,6 +337,33 @@ class MachinePage extends Component {
         />
       </div>
     );
+    }
+    else{
+      console.log(this.state.unassigned.length);
+      return (
+        <div>
+          <span id="heading">
+            <h2>Machine Types </h2>
+            <NewMachineTypeButton addType={this.addType}/>
+          </span>
+          <div style={{float: "right"}}>
+            <AutoComplete
+              dataSource={this.state.filteredAutoComplete}
+              placeholder="Search machines"
+              onSearch={this.filterTypes}
+              onSelect={this.filterTypes}
+              style={{ width: 200 }}
+            />
+          </div>
+          <Table 
+            rowKey="id" 
+            dataSource={this.state.filteredTypes} 
+            columns={columns} 
+            expandedRowRender={this.expandRow}
+          />
+        </div>
+      );
+    }
   }
 }
  

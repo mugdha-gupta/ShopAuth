@@ -46,6 +46,12 @@ public class MachineController {
         return machineRepository.findByDisplaynameContaining(body.getName());
     }
 
+    @ApiOperation(value = "Get a certain machine by name")
+    @PostMapping("/searchType")
+    public List<Machine> searchType(@Valid @RequestBody SearchMachineBody body){
+        return machineRepository.findByTypeDisplaynameContaining(body.getName());
+    }
+
     @ApiOperation(value = "Get a a list of machines of a certain type")
     @PostMapping("/filter")
     public List<Machine> filter(@Valid @RequestBody FilterBody body){
