@@ -214,31 +214,16 @@ class UserScreen(Screen):
 
 class WitnessScreen(Screen):
     def on_enter(self):
-        global witnessTimeout
-        witnessTimeout = False
-        sleep.sleep(1)
-        t1 = threading.Thread(target=self.scanWitnessOrTimeout)
-        t1.start()
-
-    def scanWitnessOrTimeout(self):
-        global witnessTimeout
-        scanWitness = threading.Thread(target=self.scanWitness)
-        scanWitness.start()
-        scanWitness.join(timeout=10)
-        if scanWitness.is_alive():
-            witnessTimeout = True
-            sm.current = 'user'
-
-    def scanWitness(self):
         global witness
-        witness = scancard(12)
-        if witnessTimeout:
-            pass
+        sleep.sleep(1)
+        witness = scancard(10)
+        if witness == "Timeout":
+            sm.current = 'user'
         elif witness == user_card:
             sm.current = 'invalidWitness'
         else:
             sm.current = 'timer'
-
+    
 
 class InvalidWitnessScreen(Screen):
     def on_enter(self):
@@ -342,4 +327,11 @@ class TestApp(App):
 
 
 if __name__ == '__main__':
-    TestApp().run()
+    try:
+        TestApp().run()
+    except KeyboardInterrupt:
+	print('Interrupted')
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
