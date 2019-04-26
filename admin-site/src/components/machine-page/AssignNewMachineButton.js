@@ -112,7 +112,7 @@ class AssignNewMachineButton extends Component {
   render() {
     return (
       <span>
-        <Button type="primary" icon="edit" ghost onClick={this.showModal}>Assign New Machine</Button>
+        <Button size="large" type="primary" icon="link" onClick={this.showModal}>Assign New Machine</Button>
         <CollectionCreateForm
           wrappedComponentRef={this.saveFormRef}
           visible={this.state.visible}

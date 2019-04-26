@@ -312,21 +312,23 @@ class MachinePage extends Component {
       console.log(unassignedMachine);
       return (
       <div>
-        <span id="heading">
+        <span id="heading" style={{float: "left"}} >
           <h2>Machine Types </h2>
           <NewMachineTypeButton addType={this.addType}/>
         </span>
         <div style={{float: "right"}}>
-          <AssignNewMachineButton 
-            machine = {unassignedMachine}
-            types = {this.state.types}
-          />
           <AutoComplete
             dataSource={this.state.filteredAutoComplete}
             placeholder="Search machines"
             onSearch={this.filterTypes}
             onSelect={this.filterTypes}
             style={{ width: 200 }}
+          />
+        </div>
+        <div style={{float: "right"}}>
+          <AssignNewMachineButton 
+            machine = {unassignedMachine}
+            types = {this.state.types}
           />
         </div>
         <Table 
