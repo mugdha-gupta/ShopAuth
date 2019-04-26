@@ -68,6 +68,8 @@ def scancard(timeout):
         return "Timeout"
     except pexpect.exceptions.EOF:
         return "Timeout"
+    except:
+        return "Timeout"
 
 
 # Create both screens. Please note the root.manager.current: this is how
@@ -204,13 +206,17 @@ class UserScreen(Screen):
         b3=GPIO.input(b3_pin)
         b4=GPIO.input(b4_pin)
         if not b1 and not b2 and not b3 and not b4:
+            p.terminate(force=True)
             sm.current = 'hidden'
 
     def scanAndAuth(self):
         global user_card
         global apiResponse
         global witness
-        user_card = scancard(None)
+        card = scancard(None)
+        if card == "Timeout":
+            return
+        user_card = card
         data = json.dumps({"machine_id": machine_id,
                            "scan_string": user_card})
         headers = {'content-type': 'application/json'}
