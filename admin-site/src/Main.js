@@ -22,7 +22,7 @@ class Main extends Component {
           	<h3 style={{display: "inline", color: 'white'}}> Admin Present:    </h3>
           	<AdminModeSwitch />
           </div>
-          <h1>Machine Shop Authorization</h1>
+          <h1>Fab Shop Authorization</h1>
           
           <ul className="header">
             <li><NavLink exact to="/">Status</NavLink></li>
