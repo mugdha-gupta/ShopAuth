@@ -40,7 +40,9 @@ lastb3press_time = datetime.now()
 lastb4press_time = datetime.now()
 
 user_card = ""
-machine_id = sys.stdin.read()
+f = open('/home/pi/MachineId.txt', "r")
+machine_id = f.read()
+f.close()
 API_ENDPOINT = "http://192.168.0.10:8080/login/auth"
 LOGOUT_ENDPOINT = "http://192.168.0.10:8080/login/logout"
 apiResponse = {}
@@ -181,11 +183,6 @@ class UserScreen(Screen):
         self.t1 = threading.Thread(target=self.scanAndAuth)
         self.t1.start()
 
-    def stop(self, *largs):
-        global shutdown
-        shutdown = True
-        super(UserScreen, self).stop(*largs)
-
     def scanAndAuth(self):
         global user_card
         global apiResponse
@@ -245,50 +242,30 @@ class WitnessScreen(Screen):
 
 class InvalidWitnessScreen(Screen):
     def on_enter(self):
-        t1 = threading.Thread(target=self.sleep)
-        t1.start()
-
-    def sleep(self):
         sleep.sleep(3)
         sm.current = 'witness'
 
 
 class NoAuthScreen(Screen):
     def on_enter(self):
-        t1 = threading.Thread(target=self.sleep)
-        t1.start()
-
-    def sleep(self):
         sleep.sleep(3)
         sm.current = 'user'
 
 
 class NoUserScreen(Screen):
     def on_enter(self):
-        t1 = threading.Thread(target=self.sleep)
-        t1.start()
-
-    def sleep(self):
         sleep.sleep(3)
         sm.current = 'user'
 
 
 class Error(Screen):
     def on_enter(self):
-        t1 = threading.Thread(target=self.sleep)
-        t1.start()
-
-    def sleep(self):
         sleep.sleep(3)
         sm.current = 'user'
 
 
 class ApiOffline(Screen):
     def on_enter(self):
-        t1 = threading.Thread(target=self.sleep)
-        t1.start()
-
-    def sleep(self):
         sleep.sleep(3)
         sm.current = 'user'
 
