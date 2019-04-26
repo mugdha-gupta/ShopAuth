@@ -311,8 +311,8 @@ class MachinePage extends Component {
       unassignedMachine = this.state.unassigned[0];
       console.log(unassignedMachine);
       return (
-      <div>
-        <span id="heading" style={{float: "left"}} >
+      <div >
+        <span id="heading" >
           <h2>Machine Types </h2>
           <NewMachineTypeButton addType={this.addType}/>
         </span>
