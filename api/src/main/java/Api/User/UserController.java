@@ -1,6 +1,9 @@
 package Api.User;
 
+import Api.Auth.Auth;
+import Api.Auth.AuthRepository;
 import Api.Exceptions.ResourceNotFoundException;
+import Api.Log.LogRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,8 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AuthRepository authRepository;
 
     @ApiOperation(value = "Get a list of users")
     @GetMapping("")
@@ -76,6 +81,9 @@ public class UserController {
     @ApiOperation(value = "Delete a user by ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
+        for(Auth auth : authRepository.findByUserId(id)){
+            authRepository.delete(auth);
+        }
         return userRepository.findById(id).map(user -> {
             userRepository.delete(user);
             return ResponseEntity.ok().build();

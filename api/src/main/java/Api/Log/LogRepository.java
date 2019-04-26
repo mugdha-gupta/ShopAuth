@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 public interface LogRepository extends JpaRepository<Log, LogPrimaryKey> {
 
-    List<Log> findByMachineId(Long machineId);
-    List<Log> findByUserId(Long userId);
-    List<Log> findTop1ByUserIdOrderByStarttimeDesc(Long userId);
+    List<Log> findByMachine(String machineName);
+    List<Log> findByUser(String userName);
+    List<Log> findTop1ByUserOrderByStarttimeDesc(String userName);
 }

@@ -1,4 +1,4 @@
-import {Button, Modal, Form, Input, TimePicker, Select} from 'antd';
+import {Button, Modal, Form, Input, Select} from 'antd';
 import React, { Component } from "react";
 import axios from "axios";
 import moment from 'moment';
@@ -17,10 +17,11 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
       function handleChange(time, timeString) {
         console.log(time, 'timeString:' + timeString);
       }
+      const title = "Assigning Machine " + machine.machineName
       return (
         <Modal
           visible={visible}
-          title={machine.machineName}
+          title={title}
           okText="Save"
           onCancel={onCancel}
           onOk={onCreate}
@@ -28,7 +29,6 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
           <Form layout="vertical">
             <Form.Item label="Machine Name">
               {getFieldDecorator('name', {
-                initialValue: machine.machineName,
                 rules: [{ required: true, message: 'Please enter a name for the machine' }],
               })(
                 <Input />
@@ -39,7 +39,6 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
             >
               {getFieldDecorator('type', {
                 rules: [{ required: true, message: 'Type of Machine' }],
-                initialValue: {key:machine.typeId}
               })(
                 <Select
                   showSearch
@@ -57,7 +56,7 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
   }
 );
 
-class EditMachineButton extends Component {
+class AssignNewMachineButton extends Component {
   state = {
     visible: false,
   };
@@ -92,7 +91,7 @@ class EditMachineButton extends Component {
             typeId: m.data.type.id
           };
           console.log(machine);
-          this.props.machine.editMachine(typeId, machine);
+          this.props.machine.assignMachine(machine);
 
         })
         .catch((error) => {
@@ -113,7 +112,7 @@ class EditMachineButton extends Component {
   render() {
     return (
       <span>
-        <Button type="primary" icon="edit" ghost onClick={this.showModal}>Edit Machine</Button>
+        <Button size="large" type="primary" icon="link" onClick={this.showModal}>Assign New Machine</Button>
         <CollectionCreateForm
           wrappedComponentRef={this.saveFormRef}
           visible={this.state.visible}
@@ -127,4 +126,4 @@ class EditMachineButton extends Component {
   }
 }
 
-export default EditMachineButton;
+export default AssignNewMachineButton;

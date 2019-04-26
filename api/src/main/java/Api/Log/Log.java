@@ -19,16 +19,11 @@ public class Log {
     @ApiModelProperty(notes = "The time the user finished using the machine", dataType = "java.lang.String", example = "YYYY-MM-DD HH:MI:SS")
     private Timestamp endtime;
 
-    @ManyToOne
-    @JoinColumn(name="user", nullable=false)
-    @ApiModelProperty(notes = "The id of the user who used the machine machine")
-    private User user;
+    @ApiModelProperty(notes = "The name of the user who used the machine machine")
+    private String user;
 
-
-    @ManyToOne
-    @JoinColumn(name="machine", nullable=false)
-    @ApiModelProperty(notes = "The id of the machine used")
-    private Machine machine;
+    @ApiModelProperty(notes = "The name of the machine used")
+    private String machine;
 
     @Id
     @NonNull
@@ -38,7 +33,7 @@ public class Log {
     public Log() {
     }
 
-    public Log(Timestamp starttime, Timestamp endtime, @NotNull User user, @NotNull Machine machine, String witness) {
+    public Log(Timestamp starttime, Timestamp endtime, String user, String machine, String witness) {
         this.starttime = starttime;
         this.endtime = endtime;
         this.user = user;
@@ -73,19 +68,19 @@ public class Log {
         this.endtime = endtime;
     }
 
-    public User getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(String user) {
         this.user = user;
     }
 
-    public Machine getMachine() {
+    public String getMachine() {
         return machine;
     }
 
-    public void setMachine(Machine machine) {
+    public void setMachine(String machine) {
         this.machine = machine;
     }
 
