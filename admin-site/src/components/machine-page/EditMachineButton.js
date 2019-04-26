@@ -2,7 +2,7 @@ import {Button, Modal, Form, Input, TimePicker, Select} from 'antd';
 import React, { Component } from "react";
 import axios from "axios";
 import moment from 'moment';
-
+import API_ADDRESS from '../../config'
 
 const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
   // eslint-disable-next-line
@@ -84,7 +84,7 @@ class EditMachineButton extends Component {
       const newType = values.type.key;
         console.log('Received values of form: ', id, machineName, typeId);
         axios
-        .put("http://localhost:8080/machine/"+id, {displayname:machineName, type:newType})
+        .put(API_ADDRESS+"/machine/"+id, {displayname:machineName, type:newType})
         .then(m => {
           const machine = {
             machineId: m.data.id,
