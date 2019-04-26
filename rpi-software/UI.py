@@ -1,3 +1,4 @@
+import sys
 import os
 os.environ['KIVY_GL_BACKEND'] = 'gl'
 import kivy
@@ -14,6 +15,7 @@ import time as sleep
 from datetime import datetime, date
 from datetime import time, timedelta
 import signal
+import socket
 
 #Control relay using gpio 4
 
@@ -39,18 +41,20 @@ lastb3press_time = datetime.now()
 lastb4press_time = datetime.now()
 
 user_card = ""
-machine_id = 1
+f = open('/home/pi/MachineId.txt', "r")
+machine_id = f.read()
+f.close()
 API_ENDPOINT = "http://192.168.0.10:8080/login/auth"
 LOGOUT_ENDPOINT = "http://192.168.0.10:8080/login/logout"
 apiResponse = {}
 witness = ""
-witnessTimeout = False
-shutdown = False
+p = None
 
 global scancard
 
 
 def scancard(timeout):
+    global p
     # TODO: make sure this subprocess dies at end of function
     try:
         p = pexpect.spawn('pcsc_scan')
@@ -63,6 +67,8 @@ def scancard(timeout):
     except pexpect.exceptions.TIMEOUT:
         return "Timeout"
     except pexpect.exceptions.EOF:
+        return "Timeout"
+    except:
         return "Timeout"
 
 
@@ -107,6 +113,19 @@ Builder.load_string("""
             font_size: '50sp'
             halign: 'center'
 
+<HiddenScreen>:
+    canvas.before:
+        BorderImage:
+            border: 0, 0, 0, 0
+            source: './BackgroundPi.png'
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        Label:
+            font_size: '50sp'
+            text: "%s" % (root.hiddenMessage)
+            halign: 'center'
+
 <NoUserScreen>:
     canvas.before:
         BorderImage:
@@ -133,7 +152,7 @@ Builder.load_string("""
             font_size: '50sp'
             halign: 'center'
 
-<Error>:
+<ErrorScreen>:
     canvas.before:
         BorderImage:
             border: 0, 0, 0, 0
@@ -179,17 +198,25 @@ class UserScreen(Screen):
     def on_enter(self):
         self.t1 = threading.Thread(target=self.scanAndAuth)
         self.t1.start()
+        Clock.schedule_interval(self.hiddenScreen, 0.01)
 
-    def stop(self, *largs):
-        global shutdown
-        shutdown = True
-        super(UserScreen, self).stop(*largs)
+    def hiddenScreen(self,dt):
+        b1=GPIO.input(b1_pin)
+        b2=GPIO.input(b2_pin)
+        b3=GPIO.input(b3_pin)
+        b4=GPIO.input(b4_pin)
+        if not b1 and not b2 and not b3 and not b4:
+            p.terminate(force=True)
+            sm.current = 'hidden'
 
     def scanAndAuth(self):
         global user_card
         global apiResponse
         global witness
-        user_card = scancard(None)
+        card = scancard(None)
+        if card == "Timeout":
+            return
+        user_card = card
         data = json.dumps({"machine_id": machine_id,
                            "scan_string": user_card})
         headers = {'content-type': 'application/json'}
@@ -205,91 +232,88 @@ class UserScreen(Screen):
                     sm.current = 'witness'
                 else:
                     witness = "None"
-                    sm.current = 'timer'
+                    sm.current = 'hidden'
             else:
                 sm.current = 'noAuth'
 
         except requests.exceptions.ConnectionError:
             sm.current = 'apiOffline'
-        except:
+        except Exception as e:
+            print(e)
+            print("Unkown error")
             sm.current = 'error'
+    
+    def on_pre_leave(self):
+        Clock.unschedule(self.hiddenScreen)
+
 
 class WitnessScreen(Screen):
     def on_enter(self):
-        global witnessTimeout
-        witnessTimeout = False
-        sleep.sleep(1)
-        t1 = threading.Thread(target=self.scanWitnessOrTimeout)
-        t1.start()
-
-    def scanWitnessOrTimeout(self):
-        global witnessTimeout
-        scanWitness = threading.Thread(target=self.scanWitness)
-        scanWitness.start()
-        scanWitness.join(timeout=10)
-        if scanWitness.is_alive():
-            witnessTimeout = True
-            sm.current = 'user'
-
-    def scanWitness(self):
         global witness
-        witness = scancard(12)
-        if witnessTimeout:
-            pass
+        sleep.sleep(1)
+        witness = scancard(10)
+        if witness == "Timeout":
+            sm.current = 'user'
         elif witness == user_card:
             sm.current = 'invalidWitness'
         else:
             sm.current = 'timer'
-
+    
 
 class InvalidWitnessScreen(Screen):
     def on_enter(self):
-        t1 = threading.Thread(target=self.sleep)
-        t1.start()
-
-    def sleep(self):
         sleep.sleep(3)
         sm.current = 'witness'
 
 
 class NoAuthScreen(Screen):
     def on_enter(self):
-        t1 = threading.Thread(target=self.sleep)
-        t1.start()
-
-    def sleep(self):
         sleep.sleep(3)
         sm.current = 'user'
 
 
 class NoUserScreen(Screen):
     def on_enter(self):
-        t1 = threading.Thread(target=self.sleep)
-        t1.start()
-
-    def sleep(self):
         sleep.sleep(3)
         sm.current = 'user'
 
 
-class Error(Screen):
+class ErrorScreen(Screen):
     def on_enter(self):
-        t1 = threading.Thread(target=self.sleep)
-        t1.start()
-
-    def sleep(self):
         sleep.sleep(3)
         sm.current = 'user'
 
 
 class ApiOffline(Screen):
     def on_enter(self):
-        t1 = threading.Thread(target=self.sleep)
-        t1.start()
-
-    def sleep(self):
         sleep.sleep(3)
         sm.current = 'user'
+
+class HiddenScreen(Screen):
+    hiddenMessage = StringProperty()
+
+    def on_pre_enter(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        self.hiddenMessage = "IP: " + ip + "\nMachine ID: " + machine_id + "\n\nPress any button to exit"
+        
+    def on_enter(self):
+        sleep.sleep(1)
+        Clock.schedule_interval(self.button, 0.01)
+    
+    def button(self,dt):
+        b1=GPIO.input(b1_pin)
+        b2=GPIO.input(b2_pin)
+        b3=GPIO.input(b3_pin)
+        b4=GPIO.input(b4_pin)
+        if not b1 or not b2 or not b3 or not b4:
+            sm.current = 'user'
+
+    def on_pre_leave(self):
+        Clock.unschedule(self.button)
+
 
 
 class TimerScreen(Screen):
@@ -353,10 +377,10 @@ sm.add_widget(WitnessScreen(name='witness'))
 sm.add_widget(NoAuthScreen(name='noAuth'))
 sm.add_widget(NoUserScreen(name='noUser'))
 sm.add_widget(ApiOffline(name='apiOffline'))
-sm.add_widget(Error(name='error'))
+sm.add_widget(ErrorScreen(name='error'))
 sm.add_widget(InvalidWitnessScreen(name='invalidWitness'))
 sm.add_widget(TimerScreen(name='timer'))
-
+sm.add_widget(HiddenScreen(name='hidden'))
 
 class TestApp(App):
     def build(self):
@@ -364,4 +388,13 @@ class TestApp(App):
 
 
 if __name__ == '__main__':
-    TestApp().run()
+    try:
+        TestApp().run()
+    except KeyboardInterrupt:
+	print('Interrupted')
+        try:
+            p.terminate(force=True)
+            GPIO.cleanup() 
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)

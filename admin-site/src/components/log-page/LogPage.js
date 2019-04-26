@@ -10,12 +10,6 @@ const columns = [
   sorter: (a, b) => {if(a.machine.toLowerCase() < b.machine.toLowerCase()) return -1;
                      if(a.machine.toLowerCase() >= b.machine.toLowerCase()) return 1;},
 }, {
-  title: 'Machine Type',
-  dataIndex: 'type',
-  sorter: (a, b) => {if(a.type.toLowerCase() < b.type.toLowerCase()) return -1;
-                     if(a.type.toLowerCase() >= b.type.toLowerCase()) return 1;
-    }
-}, {
   title: 'User',
   dataIndex: 'user',
   sorter: (a, b) => {if(a.user.toLowerCase() < b.user.toLowerCase()) return -1;
@@ -80,9 +74,8 @@ class StatusPage extends Component {
           let eSeconds = ("0" + endraw.getSeconds().toString()).slice(-2)
           let endString = eYear+'-'+eMonth+'-'+eDate+' '+eHours+':'+eMinutes+':'+eSeconds
           return {
-            machine: u.machine.displayname,
-            type: u.machine.type.displayname,
-            user: u.user.name,
+            machine: u.machine,
+            user: u.user,
             witness: u.witness,
             starttime: startString,
             endtime: endString

@@ -86,9 +86,8 @@ class DownloadButton extends Component {
           let eSeconds = ("0" + endraw.getSeconds().toString()).slice(-2)
           let endString = eYear+'-'+eMonth+'-'+eDate+' '+eHours+':'+eMinutes+':'+eSeconds
           return {
-            machine: u.machine.displayname,
-            type: u.machine.type.displayname,
-            user: u.user.name,
+            machine: u.machine,
+            user: u.user,
             starttime: startString,
             endtime: endString
           };

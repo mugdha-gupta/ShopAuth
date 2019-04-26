@@ -9,6 +9,7 @@ import java.util.List;
 public interface MachineRepository extends JpaRepository<Machine, Long> {
 
     List<Machine> findByDisplaynameContaining(String displayname);
+    List<Machine> findByTypeDisplaynameContaining(String displayname);
     List<Machine> findByTypeId(Long typeId);
 
 }

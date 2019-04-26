@@ -1,6 +1,7 @@
 package Api.Machine;
 
 import Api.Exceptions.ResourceNotFoundException;
+import Api.MachineType.MachineType;
 import Api.MachineType.MachineTypeRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.sql.Time;
 import java.util.List;
 
 @CrossOrigin
@@ -44,6 +46,12 @@ public class MachineController {
         return machineRepository.findByDisplaynameContaining(body.getName());
     }
 
+    @ApiOperation(value = "Get a certain machine by name")
+    @PostMapping("/searchType")
+    public List<Machine> searchType(@Valid @RequestBody SearchMachineBody body){
+        return machineRepository.findByTypeDisplaynameContaining(body.getName());
+    }
+
     @ApiOperation(value = "Get a a list of machines of a certain type")
     @PostMapping("/filter")
     public List<Machine> filter(@Valid @RequestBody FilterBody body){
@@ -62,6 +70,26 @@ public class MachineController {
             Machine newMachine = new Machine(body.getDisplayname(), machineType);
             return machineRepository.save(newMachine);
         }).orElseThrow(() -> new ResourceNotFoundException("machineTypeId " + body.getType() + " not found"));
+    }
+
+    @ApiOperation(value = "Create a new blank machine")
+    @PostMapping("/blank")
+    public Machine createBlank(){
+        //Check if the unassigned type exists and if not create it otherwise get it
+        MachineType unassignedType;
+        List<MachineType> machineTypes = machineTypeRepository.findByDisplaynameContaining("Unassigned");
+        if(machineTypes.size()==0){
+            unassignedType = machineTypeRepository.save(new MachineType("Unassigned", new Time(0)));
+        }
+        else{
+            unassignedType = machineTypes.get(0);
+        }
+
+        Machine blankMachine = new Machine("", unassignedType);
+        Machine saved = machineRepository.save(blankMachine);
+        saved.setDisplayname(saved.getId()+"");
+        machineRepository.save(blankMachine);
+        return saved;
     }
 
     @ApiOperation(value = "Update an existing machine")
