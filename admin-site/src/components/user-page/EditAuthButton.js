@@ -123,11 +123,16 @@ class EditAuthButton extends Component {
         .then(response => {
 
           // create an array of users only with relevant data and init an empty list of auths for each user
-          const newMachineTypes = response.data.map(u => {
+          const allTypes = response.data.map(u => {
             return {
               key: u.id,
               title: u.displayname
             };
+          });
+
+          const newMachineTypes = allTypes.filter((machinetype) => {
+            let typeName = machinetype.title.toLowerCase()
+            return !typeName.includes("unassigned")
           });
 
           // create a new "State" object without mutating
