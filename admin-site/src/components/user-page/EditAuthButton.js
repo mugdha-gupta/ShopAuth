@@ -7,9 +7,7 @@ import API_ADDRESS from '../../config'
 
 const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
   // eslint-disable-next-line
-  class extends React.Component {
-
-    
+  class extends React.Component {    
     render() {
       const {
         visible, onCancel, onCreate, form, user, machineTypes, targetKeys, filterOption, handleChange
@@ -55,19 +53,23 @@ class EditAuthButton extends Component {
     targetKeys:[]
   };
 
+  // Display form
   showModal = () => {
     this.setState({ visible: true });
   }
 
+  // Hide form on cancel
   handleCancel = () => {
     this.setState({ visible: false });
   }
 
   handleCreate = () => {
+    // If confirmed, edit the auths of the user to match those chosen
     console.log("Target Keys: ")
     console.log(this.state.targetKeys)
     var targetMachineTypes = [];
     const userId = this.props.user.id;
+    // For each type chosen, if not already authorized, add that auth to the user
     this.state.targetKeys.map(t => {
         if(this.state.currAuths.filter(auth => auth === t).length === 0){
           console.log("Target Key to add: " + t)
@@ -93,6 +95,7 @@ class EditAuthButton extends Component {
     })
     console.log("Curr Auths: ")
     console.log( this.state.currAuths)
+    // For each type that the user was authorized for, if not still chosen, remove that auth from the user
     this.state.currAuths.map(auth => {
       if(this.state.targetKeys.filter(key => key === auth).length === 0){
           console.log("{typeId:" + auth.typeId + ", userId:" + userId + "}")
@@ -109,6 +112,7 @@ class EditAuthButton extends Component {
        }
     });
     this.setState({ visible: false, currAuths: this.state.targetKeys });
+    // Update the auths displayed on the main page
     this.props.user.updateAuths(userId, targetMachineTypes);
     console.log(targetMachineTypes);
   }
@@ -119,61 +123,65 @@ class EditAuthButton extends Component {
 
   componentDidMount() {
     axios
-        .get(API_ADDRESS + "/machinetype")
-        .then(response => {
+    .get(API_ADDRESS + "/machinetype")
+    .then(response => {
 
-          // create an array of users only with relevant data and init an empty list of auths for each user
-          const allTypes = response.data.map(u => {
-            return {
-              key: u.id,
-              title: u.displayname
-            };
-          });
+      // Create an array of machine types
+      const allTypes = response.data.map(u => {
+        return {
+          key: u.id,
+          title: u.displayname
+        };
+      });
 
-          const newMachineTypes = allTypes.filter((machinetype) => {
-            let typeName = machinetype.title.toLowerCase()
-            return !typeName.includes("unassigned")
-          });
+      // Remove unassigned type from options
+      const newMachineTypes = allTypes.filter((machinetype) => {
+        let typeName = machinetype.title.toLowerCase()
+        return !typeName.includes("unassigned")
+      });
 
-          // create a new "State" object without mutating
-          // the original State object.
-          const newState = Object.assign({}, this.state, {
-            machineTypes: newMachineTypes
-          });
+      // create a new "State" object without mutating
+      // the original State object.
+      const newState = Object.assign({}, this.state, {
+        machineTypes: newMachineTypes
+      });
 
-          // store the new state object in the component's state
-          this.setState(newState);
-        })
-        .catch(error => console.log(error));
+      // store the new state object in the component's state
+      this.setState(newState);
+    })
+    .catch(error => console.log(error));
+
     axios
-        .post(API_ADDRESS + "/auth/findByUser", {
-          id: this.props.user.id
-        })
-        .then(response => {
+    .post(API_ADDRESS + "/auth/findByUser", {
+      id: this.props.user.id
+    })
+    .then(response => {
 
-          // create an array of users only with relevant data
-          const newAuths = response.data.map(u => {
-            return u.type.id;
-          });
+      // Get the current set of auths for the user being modified
+      const newAuths = response.data.map(u => {
+        return u.type.id;
+      });
 
 
-          // create a new "State" object without mutating 
-          // the original State object. 
-          const newState = Object.assign({}, this.state, {
-            currAuths: newAuths,
-            targetKeys: newAuths
-          });
+      // create a new "State" object without mutating 
+      // the original State object. 
+      const newState = Object.assign({}, this.state, {
+        currAuths: newAuths,
+        targetKeys: newAuths
+      });
 
-          // store the new state object in the component's state
-          this.setState(newState);
-        })
-        .catch(error => console.log(error));
+      // store the new state object in the component's state
+      this.setState(newState);
+    })
+    .catch(error => console.log(error));
   }
+
+  // Return boolean that says if an option should be included 
   filterOption = (inputValue, option) => option.title.toLowerCase().includes(inputValue.toLowerCase())
 
   handleChange = (targetKeys) => {
-      this.setState({ targetKeys });
-    }
+    this.setState({ targetKeys });
+  }
 
   render() {
     return (

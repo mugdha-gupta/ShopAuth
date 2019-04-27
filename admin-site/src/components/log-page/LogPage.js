@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import {Table, AutoComplete, Button} from 'antd';
 import DownloadButton from "./DownloadButton"
+import API_ADDRESS from '../../config'
 
 const columns = [
 {
@@ -14,6 +15,12 @@ const columns = [
   dataIndex: 'user',
   sorter: (a, b) => {if(a.user.toLowerCase() < b.user.toLowerCase()) return -1;
                      if(a.user.toLowerCase() >= b.user.toLowerCase()) return 1;
+    }
+}, {
+  title: 'Witness',
+  dataIndex: 'witness',
+  sorter: (a, b) => {if(a.witness.toLowerCase() < b.witness.toLowerCase()) return -1;
+                     if(a.witness.toLowerCase() >= b.witness.toLowerCase()) return 1;
     }
 }, {
   title: 'Start Time',
@@ -52,11 +59,12 @@ class StatusPage extends Component {
 
   componentDidMount() {
     axios
-      .get("http://localhost:8080/log")
+      .get(API_ADDRESS + "/log")
       .then(response => {
 
         // create an array of logs only with relevant data
         const newLogs = response.data.map(u => {
+          //Convert Unix time stamp to CST readable string
           let startraw = new Date(u.starttime)
           let sYear = startraw.getFullYear().toString()
           let sMonth = ("0" + (startraw.getMonth()+1).toString()).slice(-2);
@@ -131,7 +139,7 @@ class StatusPage extends Component {
     return (
       <div>
       <h2> Logs </h2>
-      <DownloadButton />
+      <DownloadButton logs={this.state.logs} />
         <div style={{float: "right"}}>
           <AutoComplete
             dataSource={this.state.filteredAutoComplete}

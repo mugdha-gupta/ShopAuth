@@ -6,17 +6,18 @@ import API_ADDRESS from '../config'
 
  
 class AdminModeSwitch extends Component {
-   constructor(){
-      super()
-        this.state = {
-          adminpresent: false,
-        }
+  constructor(){
+    super()
+      this.state = {
+        adminpresent: false,
+      }
 
-        this.onChange = this.onChange.bind(this);
-    }
+      this.onChange = this.onChange.bind(this);
+  }
 
 
   componentDidMount() {
+    //Load the current status of the admin boolean
     axios
     .post(API_ADDRESS + "/login/getadmin")
     .then(response => {
@@ -32,29 +33,28 @@ class AdminModeSwitch extends Component {
 
     })
     .catch((error) => {
-      // Error
       console.log(error);
     });
 
   }
 
   onChange(checked) {
-  const adminpresent = checked;
-  axios
+    //Set admin mode to the new value of the switch onChange
+    const adminpresent = checked;
+    axios
     .post(API_ADDRESS + "/login/setadmin", {adminPresent:adminpresent})
     .then(response => {
       console.log('success');
       const newState = Object.assign({}, this.state, {
-          adminpresent: response.data.adminPresent
-        });
+        adminpresent: response.data.adminPresent
+      });
 
       this.setState(newState);
     })
     .catch((error) => {
-      // Error
       console.log(error);
     });
-}
+  }
 
   render() {
     console.log(this.state.adminpresent)

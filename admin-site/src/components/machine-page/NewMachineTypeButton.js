@@ -82,6 +82,8 @@ class NewMachineTypeButton extends Component {
             typeName: u.data.displayname,
             time: u.data.time1,
           };
+
+          //Add the new type to those displayed on the page
           this.props.addType(type);
           
         })

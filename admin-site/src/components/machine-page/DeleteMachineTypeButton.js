@@ -4,11 +4,13 @@ import axios from "axios";
 import API_ADDRESS from '../../config'
 
 class DeleteMachineTypeButton extends Component {
+  // On confirm, delete the type
   handleDelete = () => {
     const id = this.props.id;
     axios
       .delete(API_ADDRESS + "/machinetype/"+id)
       .then(response => {
+        // Remove this type from being displayed on the main page
         this.props.delType(id);
       })
       .catch((error) => {

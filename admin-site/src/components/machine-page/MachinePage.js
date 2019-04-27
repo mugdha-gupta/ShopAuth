@@ -91,7 +91,7 @@ class MachinePage extends Component {
       .get(API_ADDRESS + "/machinetype")
       .then(response => {
 
-        // create an array of users only with relevant data and init an empty list of auths for each user
+        // create an array of machinetypes
         var newMachines = {};
         const allTypes = response.data.map(t => {
           newMachines[t.id] = [];
@@ -103,6 +103,7 @@ class MachinePage extends Component {
           };
         });
 
+        // Remove Unassigned type from types
         const newTypes = allTypes.filter((machinetype) => {
           let typeName = machinetype.typeName.toLowerCase()
           return !typeName.includes("unassigned")
@@ -135,6 +136,7 @@ class MachinePage extends Component {
   }
 
   expandRow = (record)  => {
+    // When row is expanded, load up machines for the type expanded if not already loaded
     if(!this.state.obtainedMachines.includes(record.typeName)){
       axios
         .post(API_ADDRESS + "/machine/filter", {typeId: record.id})
@@ -170,6 +172,8 @@ class MachinePage extends Component {
         })
         .catch(error => console.log(error));
     }
+
+    // Display all machines of a given type
     return(
       <List
         header={<div style={{fontWeight: "bold"}}>Machines</div>}
@@ -208,6 +212,7 @@ class MachinePage extends Component {
       this.setState(newState);
     }
   
+  // Add new type to type list when created
   addType = (t) => {
     const newType = this.makeType(t);
     var oldTypes = this.state.types;
@@ -215,6 +220,7 @@ class MachinePage extends Component {
     this.setState({ types: oldTypes });
   }
 
+  // Add the pointer to delType to a type created in a different file
   makeType = (t) => {
     const newType = {
       id: t.id,
@@ -225,6 +231,7 @@ class MachinePage extends Component {
     return newType;
   }
 
+  // Delete or replace a machine after edit
   delType = (id, type) => {
     var oldTypes = this.state.types;
     for(var i = 0; i < oldTypes.length; i++) {
@@ -243,6 +250,7 @@ class MachinePage extends Component {
     this.setState({ types: oldTypes });
   }
 
+  // Add pointers to functions to machines made in another file
   makeMachine = (m) => {
     const newMachine = {
       machineId: m.machineId,
@@ -254,6 +262,7 @@ class MachinePage extends Component {
     return newMachine;
   }
 
+  // add new machine to correct machine type
   assignMachine = (machine) => {
     const newMachine = this.makeMachine(machine);
     var newMachineMap = this.state.machines;
@@ -266,18 +275,24 @@ class MachinePage extends Component {
     this.setState({ machines: newMachineMap });
   }
 
+  // edit a machine (handles if machien changes type)
   editMachine = (oldType, machine) => {
     var newMachineMap = this.state.machines;
+    // The list of machines for this mahcine's old type
     var oldMachines = newMachineMap[oldType];
+    // The list of machines for this mahcine's new type
     var newMachines = newMachineMap[machine.typeId];
     for(var i = 0; i < oldMachines.length; i++) {
+        // Find the machine in the list for the old type
         if(oldMachines[i].machineId === machine.machineId) {
           const newMachine = this.makeMachine(machine);
+          //If same type just replace in same list
           if(oldType == machine.typeId){
             newMachines.splice(i, 1, newMachine);
             newMachineMap[machine.typeId] = newMachines;
             console.log(newMachines);
           }
+          //else remove from old type and add to new type
           else{
             oldMachines.splice(i, 1);
             newMachines.push(newMachine);
@@ -292,6 +307,7 @@ class MachinePage extends Component {
     this.setState({ machines: newMachineMap });
   }
 
+  // Delete machine from being displayed
   delMachine = (type, machineId) => {
     var newMachineMap = this.state.machines;
     var newMachines = newMachineMap[type];
@@ -307,6 +323,7 @@ class MachinePage extends Component {
 
   render() {
     var unassignedMachine;
+    // If there is an unassigned machine, display the assign button with first unassigned machine
     if(this.state.unassigned.length>0){
       unassignedMachine = this.state.unassigned[0];
       console.log(unassignedMachine);

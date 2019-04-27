@@ -110,11 +110,14 @@ class NewUserButton extends Component {
 
   handleCreate = () => {
     const form = this.formRef.props.form;
+    // Validate that all needed information is provided in the form
     form.validateFields((err, values) => {
       if (err) {
+        // If not all information provided, do nothing
         return;
       }
 
+      // If all information is provided, save the new user into the database
       console.log('Received values of form: ', values);
       const name = values.firstname + ' ' + values.lastname;
         const email = values.email;
@@ -131,6 +134,8 @@ class NewUserButton extends Component {
             cardid: u.data.scanString,
             admin: u.data.admin_level
           };
+
+          // Display the new user on the main page
           this.props.addUser(user);
         })
         .catch((error) => {

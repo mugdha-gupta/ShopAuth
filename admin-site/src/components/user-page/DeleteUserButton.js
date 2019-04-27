@@ -7,10 +7,12 @@ import API_ADDRESS from '../../config'
 
 class DeleteUserButton extends Component {
   handleDelete = () => {
+    //On confirm delete the user
     const id = this.props.id;
     axios
       .delete(API_ADDRESS + "/user/"+id)
       .then(response => {
+        // remove the user from being displayed on main page
         this.props.delUser(id);
       })
       .catch((error) => {

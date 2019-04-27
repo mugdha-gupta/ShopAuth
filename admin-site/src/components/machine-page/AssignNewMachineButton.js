@@ -7,8 +7,7 @@ import API_ADDRESS from '../../config'
 const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
   // eslint-disable-next-line
   class extends React.Component {
-
-    
+    //Generate form for details needed to assign the blank machine
     render() {
       const {
         visible, onCancel, onCreate, form, machine, types
@@ -70,6 +69,7 @@ class AssignNewMachineButton extends Component {
   }
 
   handleCreate = () => {
+    // On Submission of form perform update on the machince to assign it
     const form = this.formRef.props.form;
     const id = this.formRef.props.machine.machineId;
     const typeId = this.props.machine.typeId;
