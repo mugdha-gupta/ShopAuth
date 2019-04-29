@@ -13,13 +13,13 @@ import java.sql.Timestamp;
 @IdClass(LogPrimaryKey.class)
 public class Log {
     @Id
-    @ApiModelProperty(notes = "The time the user started using the machine", dataType = "java.lang.String", example = "YYYY-MM-DD HH:MI:SS")
+    @ApiModelProperty(notes = "The time the user started using the machine", dataType = "java.lang.String", example = "YYYY-MM-DDTHH:MI:SS")
     private Timestamp starttime;
 
-    @ApiModelProperty(notes = "The time the user finished using the machine", dataType = "java.lang.String", example = "YYYY-MM-DD HH:MI:SS")
+    @ApiModelProperty(notes = "The time the user finished using the machine", dataType = "java.lang.String", example = "YYYY-MM-DDTHH:MI:SS")
     private Timestamp endtime;
 
-    @ApiModelProperty(notes = "The name of the user who used the machine machine")
+    @ApiModelProperty(notes = "The name of the user who used the machine")
     private String user;
 
     @ApiModelProperty(notes = "The name of the machine used")
@@ -27,7 +27,7 @@ public class Log {
 
     @Id
     @NonNull
-    @ApiModelProperty(notes = "The scan string of the witness")
+    @ApiModelProperty(notes = "The name or scan string of the witness")
     private String witness;
 
     public Log() {
@@ -85,6 +85,9 @@ public class Log {
     }
 
     public String getWitness() {
+        if(witness==null){
+            return "null";
+        }
         return witness;
     }
 

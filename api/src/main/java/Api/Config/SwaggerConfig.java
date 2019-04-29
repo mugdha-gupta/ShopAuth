@@ -26,6 +26,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 
     }
 
+    // Sets up Swagger website for API documentation that is availible at http://localhost:8080/swagger-ui.html#/
     private ApiInfo metaData() {
         return new ApiInfoBuilder()
                 .title("UTD Fabrication Shop API")
