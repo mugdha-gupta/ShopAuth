@@ -14,14 +14,14 @@ public class LogCreator {
     private Timestamp end_time;
 
     @NonNull
-    @ApiModelProperty(notes = "The id of the user who used the machine machine")
+    @ApiModelProperty(notes = "The id of the user who used the machine")
     private String user;
 
     @NonNull
     @ApiModelProperty(notes = "The id of the machine used")
     private String machine;
 
-    @ApiModelProperty(notes = "The scan string of the witness")
+    @ApiModelProperty(notes = "The scan string or name of the witness")
     private String witness;
 
     public LogCreator() {

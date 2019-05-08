@@ -3,7 +3,10 @@ import requests
 
 
 def main():
+    # Check if we have a Machine Id stored
     exists = os.path.isfile('/home/pi/MachineId.txt')
+    
+    # If no id stored call API to assign us a new ID and store it
     if not exists:
         f = open('/home/pi/MachineId.txt', "w+")
         API_ENDPOINT = "http://192.168.0.10:8080/machine/blank"

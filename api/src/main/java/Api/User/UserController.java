@@ -81,6 +81,7 @@ public class UserController {
     @ApiOperation(value = "Delete a user by ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
+        // Delete all authorizations for the user stored in the database before delete the user to avoid foreign key error
         for(Auth auth : authRepository.findByUserId(id)){
             authRepository.delete(auth);
         }

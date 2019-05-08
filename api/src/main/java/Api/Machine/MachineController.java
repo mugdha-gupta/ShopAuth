@@ -95,6 +95,7 @@ public class MachineController {
     @ApiOperation(value = "Update an existing machine")
     @PutMapping("/{id}")
     public Machine update(@PathVariable Long id, @Valid @RequestBody MachineUpdater body){
+        // Find machine to update
         return machineRepository.findById(id).map(machine -> {
             if(body.getDisplayname()!=null) {
                 machine.setDisplayname(body.getDisplayname());

@@ -1,7 +1,13 @@
 package Api.Auth;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class AuthCreator {
+
+    @ApiModelProperty(notes = "The id of the user authorized for a machine")
     private Long userId;
+
+    @ApiModelProperty(notes = "The id of the type of the machine that the user is authorized for")
     private Long typeId;
 
     public AuthCreator() {

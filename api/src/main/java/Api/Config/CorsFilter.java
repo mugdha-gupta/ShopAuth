@@ -10,7 +10,7 @@ import java.io.IOException;
 
 @Component
 public class CorsFilter extends OncePerRequestFilter {
-
+    // Needed to test website on localhost otherwise cors error occurs
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");

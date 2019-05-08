@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 
 public class SearchMachineBody {
     @NotNull
-    @ApiModelProperty(notes = "The name of a machine")
+    @ApiModelProperty(notes = "The name of a machine to search for")
     private String name;
 
     public SearchMachineBody(){

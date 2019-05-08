@@ -20,13 +20,13 @@ public class Auth {
     @NotNull
     @ManyToOne
     @JoinColumn(name="user", nullable=false)
-    @ApiModelProperty(notes = "The id of the type of the machine")
+    @ApiModelProperty(notes = "The id of the user authorized for a machine")
     private User user;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name="type", nullable=false)
-    @ApiModelProperty(notes = "The id of the type of the machine")
+    @ApiModelProperty(notes = "The id of the type of the machine that the user is authorized for")
     private MachineType type;
 
     public Auth() {  }

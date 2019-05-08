@@ -59,11 +59,14 @@ public class LoginController {
         AuthReturn authReturn = new AuthReturn();
         return machineRepository.findById(body.getMachine_id()).map(machine ->
                 userRepository.findByScanString(body.getScan_string()).map(user -> {
+                    // Check if there exits an auth in our database for the given user and machine
                     boolean auth = authRepository.findByUserIdAndTypeId(user.getId(), machine.getType().getId()).isPresent();
+                    // If authorized, add that the user is using the machine into our status
                     if(auth) {
                         status.put(machine, new UserMachine(user, machine));
                     }
                     authReturn.setAuthenticated(auth);
+                    // You need a witness if there is no admin present and you are not an admin
                     authReturn.setNeedWitness(!adminPresent && user.getAdmin_level()!=2);
                     authReturn.setTime(machine.getType().getTime1());
                     return authReturn;

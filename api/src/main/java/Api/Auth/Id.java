@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 
 public class Id {
     @NotNull
-    @ApiModelProperty(notes = "The email of the desired user")
+    @ApiModelProperty(notes = "An id of a user, machine, or machine type")
     private long id;
 
     public Id() {

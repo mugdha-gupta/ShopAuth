@@ -10,5 +10,6 @@ public interface LogRepository extends JpaRepository<Log, LogPrimaryKey> {
 
     List<Log> findByMachine(String machineName);
     List<Log> findByUser(String userName);
+    //Find the latest use of a machine by a user
     List<Log> findTop1ByUserOrderByStarttimeDesc(String userName);
 }
