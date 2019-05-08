@@ -105,11 +105,14 @@ class EditUserButton extends Component {
   handleCreate = () => {
     const form = this.formRef.props.form;
     const id = this.formRef.props.user.id;
+    // Validate that all needed information is provided in the form
     form.validateFields((err, values) => {
       if (err) {
+        // If not all information provided, do nothing
         return;
       }
 
+      // If all information is provided, save the changes in the database
       console.log('Received values of form: ', values);
       const name = values.name;
         const email = values.email;
@@ -126,6 +129,8 @@ class EditUserButton extends Component {
             cardid: u.data.scanString,
             admin: u.data.admin_level
           };
+
+          // Replace the old user with the edited one on the main page
           this.props.user.delUser(u.data.id, user);
 
         })
@@ -135,6 +140,8 @@ class EditUserButton extends Component {
           alert('error could not save');
 
       });
+
+      //Reset the form for next use
       form.resetFields();
       this.setState({ visible: false });
     });

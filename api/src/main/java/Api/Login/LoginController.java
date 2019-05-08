@@ -89,9 +89,13 @@ public class LoginController {
                 throw new ResourceNotFoundException("MachineId " + body.getMachine_id() + " not in use currently");
             //Get User
             return userRepository.findByScanString(body.getScan_string()).map(user -> {
-
-                Log newLog = new Log(startTime, new Timestamp(System.currentTimeMillis()), user.getName(), machine.getDisplayname(), body.getWitness());
-                return logRepository.save(newLog);
+                //If user with scanstring exists, then use their name in log
+                return userRepository.findByScanString(body.getWitness()).map(witness -> {
+                    Log newLog = new Log(startTime, new Timestamp(System.currentTimeMillis()), user.getName(), machine.getDisplayname(), witness.getName());
+                    return logRepository.save(newLog);
+                }
+                //If witness is not in system, just store their card id
+                ).orElseGet(() -> logRepository.save(new Log(startTime, new Timestamp(System.currentTimeMillis()), user.getName(), machine.getDisplayname(), body.getWitness())));
                 //If User not found throw error
             }).orElseThrow(() -> new ResourceNotFoundException("ScanString " + body.getScan_string() + " not found"));
             //If machine not found throw error

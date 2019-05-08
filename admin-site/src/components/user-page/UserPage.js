@@ -87,6 +87,7 @@ class UserPage extends Component {
             email: u.email,
             cardid: u.scanString,
             admin: u.admin_level,
+            // Functions used to interact with the main page from external pages
             delUser: this.delUser,
             updateAuths: this.updateAuths
           };
@@ -190,15 +191,19 @@ class UserPage extends Component {
     return newUser;
   }
 
+  // Delete or replace the user based on if user is None
   delUser = (id, user) => {
     console.log(id);
     var oldUsers = this.state.users;
     for(var i = 0; i < oldUsers.length; i++) {
+        // Find the user in the user list
         if(oldUsers[i].id === id) {
+          // If new user is defined than replace
           if(user){
             const newUser = this.makeUser(user);
             oldUsers.splice(i, 1, newUser);
           }
+          // Otherwise just delete
           else{
             console.log(oldUsers[i]);
             oldUsers.splice(i, 1);

@@ -5,11 +5,13 @@ import API_ADDRESS from '../../config'
 
 class DeleteMachineButton extends Component {
   handleDelete = () => {
+    // If confirmed, delete the machine
     const id = this.props.machine.machineId;
     const type = this.props.machine.typeId;
     axios
       .delete(API_ADDRESS+"/machine/"+id)
       .then(response => {
+        // Remove machine from being displayed in the main page
         this.props.machine.delMachine(type, id);
       })
       .catch((error) => {
