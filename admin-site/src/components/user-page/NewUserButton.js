@@ -121,7 +121,7 @@ class NewUserButton extends Component {
       console.log('Received values of form: ', values);
       const name = values.firstname + ' ' + values.lastname;
         const email = values.email;
-        const cardid = values.cardid;
+        const cardid = values.cardid.replace(/\s/g, '');;
         const adminlevel = values.adminlevel;
         console.log('Received values of form: ', name, email, cardid, adminlevel);
         axios
